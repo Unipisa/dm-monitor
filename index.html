@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<style>
+html {
+    height: 1080px;
+    width: 1920px;
+}
+
+body {
+    height: 1080px;
+    width: 1920px;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url("cherubino_pant541.png");
+    background-repeat: no-repeat;
+    background-position: right 50px bottom 50px;
+    background-size: 400px;
+}
+
+.header {
+    background-color: #003c71;
+    text-align: left;
+    padding: 20px;
+}
+
+.event {
+    padding: 1rem;
+    border-top: 3px groove #003c71;
+    padding-top: 30px;
+    margin-bottom: 30px;
+}
+
+.event > h3 {
+    color: #003c71;
+    font-family: sans;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+
+.eventi {
+    margin-top: 20px;
+    width: 1200px;
+    display: none;
+}
+
+.eventi > h2 {
+    font-family: sans;
+    font-size: 3.5rem;
+    color: white;
+    position: fixed;
+    right: 600px;
+    top: 40px;
+    margin-top: 0px;
+}
+
+.venue {
+    font-size: 2.2rem;
+    font-family: sans;
+    font-variant: bold;
+    margin-bottom: 15px;
+}
+
+.visitors {
+    position: fixed;
+    left: 1250px;
+    border-left: 3px groove #003c71;
+    width: 600px;
+    height: 870px;
+    top: 180px;
+    display: none;
+}
+
+.visitors-container {
+    overflow: hidden;
+    display: block;
+    height: 820px;
+}
+
+.visitors > h2 {
+    font-size: 2em;
+    color: #003c71;
+    margin-left: 10px;
+    text-align: left;
+}
+
+#clock {
+    position: fixed;
+    top: 40px;
+    right: 50px;
+    color: white;
+    font-size: 50px;
+}
+
+.visitor {
+    color: #003c71;
+    font-family: sans;
+    font-size: 1.8rem;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding-left: 20px;
+    border-bottom: 3px groove #003c71;
+    padding-bottom: 20px;
+}
+
+.special {
+    padding: 2em;
+    margin-top: 25px;
+    font-size: 2rem;
+    display: none;
+}
+
+.special > h1 {
+    font-size: 1.4em;
+    color: white;
+    margin-bottom: 30px;
+    margin-top: -30px;
+    border-bottom: 6px solid #003c71;
+    border-top: 6px solid #003c71;
+    border-left: 6px solid #003c71;
+    padding: .2em;
+    background: #003c71;
+}
+
+.special h2 {
+    font-size: 1.2em;
+    color: #003c71;
+    margin-bottom: 30px;
+}
+
+.fullscreen-img {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 1920px;
+    height: 1080px;
+    z-index: 100;
+}
+
+.problem {
+    display: none;
+    height: 920px;
+}
+
+.problem iframe {
+    width: 100%;
+    height: 920px;
+    border: none;
+}
+
+</style>
+
+<script
+src="https://code.jquery.com/jquery-3.7.1.min.js"
+integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone.min.js"></script>
+
+<script src="https://paolini.github.io/fractal-xmas/xmas.js?4"></script>
+
+<script>
+moment.tz.add("Europe/Rome|LMT RMT CET CEST|-N.U -N.U -10 -20|012323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232323232|-4aU0N.U 15snN.U T000 Lz0 1cN0 1db0 1410 1on0 Wp0 1qL0 17d0 1cL0 M3B0 5M20 WM0 1fA0 1cM0 16M0 1iM0 16m0 1de0 1lc0 14m0 1lc0 WO0 1qM0 GTW0 On0 1C10 LA0 1C00 LA0 1EM0 LA0 1C00 LA0 1zc0 Oo0 1C00 Oo0 1C00 LA0 1zc0 Oo0 1C00 LA0 1C00 LA0 1zc0 Oo0 1C00 Oo0 1zc0 Oo0 1fC0 1a00 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1cM0 1fA0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1qM0 WM0 1qM0 WM0 1qM0 11A0 1o00 11A0 1o00 11A0 1o00|39e5");
+
+// Inserire qui da quando a quando bisogna mostrare lo special (vedi il <div class="special"></div> sotto)
+const showSpecialStart = moment.tz("2024-01-19 06:00", "Europe/Rome").unix()
+const showSpecialEnd   = moment.tz("2024-01-19 20:00", "Europe/Rome").unix()
+
+function setupInterval(fn, seconds) {
+    try {
+        fn()
+    }
+    catch (error) {
+        console.log(error)
+    }
+
+    setInterval(fn, seconds * 1000)
+}
+
+function startLoop() {
+    // Routine that updates the clock
+    setupInterval(updateClock, 1)
+
+    // Block of routines that periodically poll events from different sources and 
+    // update the relevant blocks in the HTML
+    setupInterval(loadEvents, 600)
+    setupInterval(loadVisitors, 600)
+
+    // Routine that cycles the visibility of the different parts. 
+    setupInterval(cycleScreen, 20)
+
+    // Scroll effect for the visitor block
+    setInterval(scrollVisitors, 100)
+
+}
+
+function scrollVisitors() {
+    const visitorContainers = document.getElementsByClassName("visitors-container")
+    const stop_up = 50;
+    const stop_bottom = 50;
+    if (visitorContainers.length > 0) {
+        const vc = visitorContainers[0]
+	// console.log(vc['data-wait']);
+        if (vc['data-wait'] > 0) {
+           if (vc['data-wait']<stop_up)  vc.scrollTop = 0;
+           vc['data-wait'] --;
+           return
+        }
+        const currentTop = vc.scrollTop
+        const newTop = vc.scrollTop + 1
+
+        // If we get to the bottom, wrap to the top
+        vc.scrollTop = newTop
+        if (currentTop && currentTop == vc.scrollTop) {
+	    vc['data-wait'] = stop_up + stop_bottom;
+        }
+    }
+}
+
+function updateClock() {
+    const now = moment().tz("Europe/Rome")
+    $('#clock').html(now.format('ddd MMM DD – HH:mm') + "<span style='font-size: 28px'> " + now.format("ss") + "</span>");
+}
+
+const effectDuration = 500
+
+class SpecialEventPage {
+	start() {
+		$('.special').fadeIn();
+	}
+
+	stop(callback) {
+		$('.special').fadeOut(effectDuration);
+		setTimeout(callback, effectDuration);
+	}
+
+	isActive() {
+		return moment().unix() >= showSpecialStart && moment().unix() <= showSpecialEnd;
+	}
+};
+
+class EventsAndVisitorsPage {
+	start() {
+		$('.visitors, .eventi').fadeIn(effectDuration); 
+	}
+
+	stop(callback) {
+		$('.visitors, .eventi').fadeOut(effectDuration);
+		setTimeout(callback, effectDuration);
+	}
+
+	isActive() {
+		return true;
+	}
+
+};
+
+class FractalXmaxPage {
+	start() {
+		$('.xmas').fadeIn(effectDuration);
+		const canvas = document.getElementById('xmas_canvas');
+		this.xmas = new Xmas(canvas, {
+			nFlakes: 25,
+			fillColor: '#003c71',
+			speed: 3.0,
+		});
+	}
+
+	stop(callback) {
+		$('.xmas').fadeOut(effectDuration);
+		setTimeout(() => {
+			this.xmas.stop();
+			callback();
+		}, effectDuration);
+	}
+
+	isActive() {
+		// è attivo dall'8 dicembre al 6 gennaio
+		const date = moment().tz("Europe/Rome").format('MM-DD')
+		return date >= '12-08' || date <= '01-06'
+	}
+};
+
+class ProblemPage {
+	start() {
+		$('.problem').fadeIn(effectDuration);
+	}
+
+	stop(callback) {
+		$('.problem').fadeOut(effectDuration);
+		setTimeout(callback, effectDuration);
+		setTimeout(function() {
+                       document.querySelector('.problem iframe').src+='';
+		}, effectDuration);
+	}
+
+	isActive() {
+		return false;
+	}
+}
+
+const pages = [ SpecialEventPage, EventsAndVisitorsPage, FractalXmaxPage, ProblemPage ];
+
+var currentPage = null;
+
+async function cycleScreen() {
+	// the pages array is rotated
+	// each page is created in turn
+	// if it is active it is started
+	// otherwise we proceed with the next page
+
+	// TODO: check if all pages are inactive... otherwise we have an infinite loop
+
+	for (;;) {
+		const nextPage = pages[0];
+		pages.push(pages.shift()); // rotate array
+		if (currentPage && nextPage === currentPage.constructor) break; // it is the same page: leave it alone!
+		const page = new nextPage();
+		if (page.isActive()) {
+			if (currentPage) currentPage.stop(() => page.start())
+			else page.start();
+			currentPage = page;
+			break;
+		}
+	}
+}
+
+function sortEvents(eventA, eventB) {
+    var dateA = null;
+    if (eventA.type == 'conference') {
+        dateA = new Date(eventA.startDate)
+    }
+    else {
+        dateA = new Date(eventA.startDatetime)
+    }
+
+
+    if (eventB.type == 'conference') {
+        dateB = new Date(eventB.startDate)
+    }
+    else {
+        dateB = new Date(eventB.startDatetime)
+    }
+
+    return dateA.getTime() - dateB.getTime()
+}
+
+async function loadEvents() {
+    var data = null;
+
+    try {
+        // let res = await fetch('https://www.dm.unipi.it/wp-json/wp/v2/unipievents?per_page=50');
+        let res_sem = await (await fetch('https://manage.dm.unipi.it/api/v0/public/seminars?from=now')).json()
+        let res_con = await (await fetch('https://manage.dm.unipi.it/api/v0/public/conferences?from=now')).json()
+
+        const res_sem_aug = res_sem.data.map((x) => {
+            return {  ...x, type: 'seminar' }
+        })
+        const res_con_aug = res_con.data.map((x) => {
+            return { ...x, type: 'conference' }
+        })
+        data = [ ...res_sem_aug, ...res_con_aug ]
+        data.sort(sortEvents)
+    } catch (error) {
+       return;
+    }
+
+    var valid_events = [];
+    const now = moment.utc().tz("Europe/Rome")
+
+    // We only collect the events that end in the future.
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].startDatetime) {
+            let eventDate = moment.utc(data[i].startDatetime).tz("Europe/Rome")
+            if (now <= moment.utc(data[i].startDatetime).tz("Europe/Rome").add(data[i].duration, "minutes")) {
+                valid_events.push(data[i])
+            }
+        }
+        else {
+            valid_events.push(data[i])
+        }
+    }
+
+    console.log(valid_events)
+
+    $('.eventi').html('');
+    const number_of_events = valid_events.length < 3 ? valid_events.length : 3
+
+    
+    for (var i = 0; i < number_of_events; i++) {
+        let clock_icon = '<i class="fa-solid fa-clock"></i>';
+        let venue_icon = `<i class="fa-solid fa-location-dot"></i>`;
+
+        var to = ""
+        var from = ""
+
+        if (valid_events[i].type == 'conference') {
+            to = moment.utc(valid_events[i].endDate).tz("Europe/Rome")
+            from = moment.utc(valid_events[i].startDate).tz("Europe/Rome")
+        }
+        else {
+            // Seminar here
+            to = moment.utc(valid_events[i].startDatetime).add(valid_events[i].duration, 'minutes').tz("Europe/Rome")
+            from = moment.utc(valid_events[i].startDatetime).tz("Europe/Rome")
+        }
+
+        from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
+        
+        if (from >= now && to <= now) {
+            from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
+        }
+        
+        let venue = `<span class="badge badge-sm badge-secondary">${venue_icon} ${valid_events[i].conferenceRoom?.name}</span>`
+        
+        var border_override = "";
+        if (i == 0) {
+            border_override = ` style="border-top: 0px;"`;
+        }
+        
+        var tag = "";
+        var speaker = "";
+        if (valid_events[i].type == 'conference') {
+            tag = '<span class="badge badge-sm badge-primary">Conference</span>';
+        }
+        else if (valid_events[i].type == 'seminar') {
+            tag = '<span class="badge badge-sm badge-primary small">Seminar</span>';
+            speaker = "(" + formatPerson(valid_events[i].speaker) + ")"
+        }
+        
+        let el = `
+        <div class="event" ${border_override}>
+        <div class="venue">
+        ${from} 
+        ${venue}
+        ${tag}
+        </div>
+        <h3>
+        ${valid_events[i].title} ${speaker}
+        </h3>
+        </div>
+        `;
+        $('.eventi').append(el);
+    }
+}
+
+async function loadVisitors() {
+    var visits = [];
+
+    try {
+        const endpoint = 'https://manage.dm.unipi.it/api/v0/public/visits';    
+        const res = await fetch(endpoint)
+        visits = (await res.json()).data
+    }
+    catch (error) {
+        console.log("Error loading visitors");
+        return;
+    }
+    
+    visits.sort((a,b) => a.startDate.localeCompare(b.startDate)).reverse()
+    
+    $('.visitors').html(`<h2>Current visitors</h2><div class="visitors-container"></div>`)
+    
+    for (const visit of visits) {
+        const startDay = moment.utc(visit.startDate).format('DD')
+        const startMonth = moment.utc(visit.startDate).format('MMM')
+        const startYear = moment.utc(visit.startDate).format('YYYY')
+        const endDay = moment.utc(visit.endDate).format('DD')
+        const endMonth = moment.utc(visit.endDate).format('MMM')
+        const endYear = moment.utc(visit.endDate).format('YYYY')
+        
+        var date = `${startMonth} ${startDay} &ndash; ${startMonth==endMonth?'':endMonth} ${endDay}`
+        if (startYear != endYear) {
+            date = `${startYear}, ${startMonth} ${startDay} &ndash; ${endYear}, ${endMonth} ${endDay}`
+        }
+        
+        const datesBadge = `<span class="badge badge-sm badge-primary">${date}</span>`
+        
+        const room = visit?.roomAssignment?.room
+        const roomBadge = room?`<span class="badge badge-sm badge-secondary">Room ${room.building}&ndash;${room.floor}&ndash;${room.number}</span>`:'' 
+        const person = visit?.person
+
+        const personLine = formatPerson(person)
+
+        const el = `
+        <div class="visitor">
+        ${datesBadge} ${roomBadge}
+        <br>
+        ${personLine}
+        </div>`
+
+        $('.visitors-container').append(el)
+    }
+}
+
+function formatPerson(person) {
+	var affiliationsLine = "";
+        try {
+            const affiliations = person?.affiliations.map(_ => _.name)
+            affiliationsLine = affiliations?` &mdash; ${affiliations.join(', ')}`:''
+        } catch (error) {
+            // No valid affiliations, keep an empty string
+        }
+
+        return `${person.firstName} ${person.lastName} ${affiliationsLine}`
+}
+</script>
+</head>
+<body onload="startLoop()">
+<div class="header">
+<img height="120" src="https://www.dm.unipi.it/wp-content/uploads/2022/07/matematica_dx_bianco-1.png">
+</div>
+
+<div id="clock">
+<!-- Orologio in alto a dx -->
+</div>
+
+<div class="eventi">
+<!-- Lista degli eventi da mostrare -->
+</div>
+
+<div class="problem">
+<iframe src="https://lab.phc.dm.unipi.it/problemi/jumbotron"></iframe>
+</div>
+
+<div class="special">
+<!-- Commentare il contenuto seguente per disabilitarlo -->
+<!-- <h1>Appello di laurea del 27 Ottobre 2023</h1>
+    <div class="row">
+        <div class="col-4 p-5">
+            <h2>Aula Riunioni <span class="badge badge-sm badge-primary">Primo piano</span></h2>
+            <strong>10:10</strong> Cognome Nome<br>
+            <strong>11:10</strong> Cognome Nome<br>
+            <strong>11:40</strong> Cognome Nome<br>
+        </div>
+        <div class="col-4 p-5">
+            <h2>Aula Seminari <span class="badge badge-sm badge-primary">Primo piano</span></h2>
+            <strong>09:00</strong> Cognome Nome<br>
+            <strong>09:30</strong> Cognome Nome<br>
+            <strong>10:10</strong> Cognome Nome<br>
+            <hr>
+            <strong>11:00</strong> Cognome Nome<br>
+            <strong>11:40</strong> Cognome Nome<br>
+            <strong>12:20</strong> Caporali Matteo
+        </div>
+        <div class="col-4 p-5">
+            <h2>Aula Magna <span class="badge badge-sm badge-primary">Piano terra</span></h2>
+            <strong>8:30</strong> Cognome Nome<br>
+            <strong>9:00</strong> Cognome Nome<br>
+            <strong>9:30</strong> Cognome Nome<br>
+            <strong>10:00</strong> Cognome Nome<br>
+            <strong>10:30</strong> Cognome Nome<br>
+            <strong>11:20</strong> Cognome Nome<br>
+            <strong>12:00</strong> Cognome Nome<br>
+            <strong>12:40</strong> Cognome Nome<br>
+            <hr>
+            <strong>14:10</strong> Cognome Nome<br>
+            <strong>14:50</strong> Cognome Nome<br>
+            <strong>15:30</strong> Cognome Nome<br>
+        </div>
+    </div>
+//-->
+
+<!-- Immagine full screen, da usare per i colloquia: la query ?d=... è solo un trick per bypassare la cache.  -->
+<img class="fullscreen-img" src="/colloquium_gray.png?d=20231213x"/>
+</div>
+
+<div class="visitors">
+</div>
+
+<div class="xmas">
+<canvas id="xmas_canvas" width=1920 height=900>
+</div>
+</body>
+</html>
