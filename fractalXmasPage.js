@@ -33,11 +33,11 @@ class FractalXmasPage {
     }
 
 	priority() {
-        return 1 // testing
-
 		// è attivo dall'8 dicembre al 6 gennaio
 		const date = moment().tz("Europe/Rome").format('MM-DD')
-		return (date >= '12-08' || date <= '01-06') ? 10 : 0
+		if (date >= '12-08' || date <= '01-06') return 10
+
+        return 0
 	}
 };
 

@@ -25,8 +25,11 @@ class ProblemPage {
     }
 
 	priority() {
-		return 1 // testing
-        return 0 // disabled
+        // show with high priority
+        // after between 7pm and 7am
+		const date = moment().tz("Europe/Rome").format('HH-mm')
+		if (date >= '19-00' || date <= '07-00') return 4
+		return 0
 	}
 }
 

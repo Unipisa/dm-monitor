@@ -29,6 +29,14 @@ body {
     font-size: 50px;
 }
 
+#bullets {
+    position: fixed;
+    top: 120px;
+    left: 900px;
+    color: white;
+    font-size: 20px;   
+}
+
 .event {
     padding: 1rem;
     border-top: 3px groove #003c71;

@@ -1,4 +1,11 @@
 class SpecialEventPage {
+    constructor({imageUrl,start,end}) {
+        this.imageUrl = imageUrl
+        this.start = start
+        this.end = end
+        console.log(`constructor ${this.start}`)
+    }
+
 	start() {
         console.log(`start special`)
         if (this.div) {
@@ -6,9 +13,7 @@ class SpecialEventPage {
         }
         this.div = document.createElement('div')
         this.div.className = 'special'
-        this.div.innerHTML = `
-            <img class="fullscreen-img" src="images/colloquium_gray.png?d=20231213x"/>
-        `
+        this.div.innerHTML = `<img class="fullscreen-img" src="${imageUrl}"/>`
         document.body.appendChild(this.div)
         $(this.div).fadeIn();
 	}
@@ -29,10 +34,11 @@ class SpecialEventPage {
     }
 
 	priority() {
-        return 1 // testing
-        // Inserire qui da quando a quando bisogna mostrare lo special (vedi il <div class="special"></div> sotto)
-        const showSpecialStart = moment.tz("2024-01-24 06:00", "Europe/Rome").unix()
-        const showSpecialEnd   = moment.tz("2024-01-24 20:00", "Europe/Rome").unix()
-		return moment().unix() >= showSpecialStart && moment().unix() <= showSpecialEnd ? 1 : 0
+        const showSpecialStart = moment.tz(this.start, "Europe/Rome").unix()
+        const showSpecialEnd   = moment.tz(this.end, "Europe/Rome").unix()
+		if (moment().unix() >= showSpecialStart && moment().unix() <= showSpecialEnd) {
+            return 2
+        }
+        return 0
 	}
 };

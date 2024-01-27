@@ -1,5 +1,9 @@
 const pages = [
-    new SpecialEventPage(),
+    new SpecialEventPage({
+        imageUrl: "images/colloquium_gray.png?d=20231213x",
+        start: "2024-01-27 06:00",
+        end: "2024-01-27 18:44"
+    }),
     new EventsAndVisitorsPage(),
     new FractalXmasPage(),
     new ProblemPage(),
@@ -92,6 +96,7 @@ async function cycleScreen() {
         sum += priority[i]
         if (sum > r) {
             // choose this!
+            $("#bullets").html(priority.map((p,j) => (p>0?(i===j?'●':'○'):'')).filter(s=>(s!=='')).join(''))
             const page = pages[i]
             if (currentPage === page) return
 
