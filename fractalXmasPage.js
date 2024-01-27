@@ -28,6 +28,10 @@ class FractalXmasPage {
         this.xmas = null
 	}
 
+    duration() {
+        return 20000
+    }
+
 	priority() {
         return 1 // testing
 

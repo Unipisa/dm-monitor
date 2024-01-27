@@ -45,6 +45,10 @@ class EventsAndVisitorsPage {
         })
 	}
 
+    duration() {
+        return 20000
+    }
+
 	priority() {
         if (!this.lastUpdate) return 0
 		return 1

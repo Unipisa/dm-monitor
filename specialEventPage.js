@@ -7,7 +7,7 @@ class SpecialEventPage {
         this.div = document.createElement('div')
         this.div.className = 'special'
         this.div.innerHTML = `
-<img class="fullscreen-img" src="images/colloquium_gray.png?d=20231213x"/>
+            <img class="fullscreen-img" src="images/colloquium_gray.png?d=20231213x"/>
         `
         document.body.appendChild(this.div)
         $(this.div).fadeIn();
@@ -23,6 +23,10 @@ class SpecialEventPage {
             callback()
         });
 	}
+
+    duration() {
+        return 20000
+    }
 
 	priority() {
         return 1 // testing

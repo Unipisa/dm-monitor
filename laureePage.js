@@ -9,6 +9,10 @@ class LaureePage {
         })
 	}
 
+    duration() {
+        return 20000
+    }
+
 	priority() {
 		return 1 // testing
         return 0 // disabled

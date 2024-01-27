@@ -23,7 +23,6 @@ function startLoop() {
 
     // Routine that cycles the visibility of the different parts. 
     setupInterval(cycleScreen, 5)
-
 }
 
 function updateClock() {
@@ -42,14 +41,26 @@ class Event {
     stop(callback) {
         // fade out
         // call callback after fade out
+        callback()
     }
 
-    isActive() {
-        // return true if the event can be shown now
+    duration() {
+        // return the minimal time (milliseconds)
+        // this page should be shown
+        return 20000
+    }
+
+    priority() {
+        // priority of this page
+        // the probability of choosing this page is proportional to the priority
+        // 0: never shown
+        // 1: default
+        return 1
     }
 }
 
 let currentPage = null
+let currentPageTimestamp = null
 
 async function cycleScreen() {
     // choose a random page among pages with priority>0
@@ -57,6 +68,13 @@ async function cycleScreen() {
     // its priority
 
     if (pages.length == 0) return
+
+    const timeElapsedMilliseconds = (new Date()) - currentPageTimestamp
+    if (currentPage && timeElapsedMilliseconds < currentPage.duration()) {
+        console.log(`wait longer...`)
+        return
+    }
+
     const priority = pages.map(p => p.priority())
     const total = priority.reduce((a,b) => a+b, 0)
     if (total === 0) {
@@ -80,6 +98,7 @@ async function cycleScreen() {
             if (currentPage) currentPage.stop(() => page.start())
             else page.start()
             currentPage = page
+            currentPageTimestamp = new Date()
             console.log(`current page: ${currentPage.constructor.name}`)
             return
         }

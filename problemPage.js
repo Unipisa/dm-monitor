@@ -20,6 +20,10 @@ class ProblemPage {
         this.div = null
 	}
 
+    duration() {
+        return 60000
+    }
+
 	priority() {
 		return 1 // testing
         return 0 // disabled
