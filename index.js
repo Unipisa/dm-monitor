@@ -1,8 +1,9 @@
 const pages = [
     new SpecialEventPage(),
     new EventsAndVisitorsPage(),
-    //new FractalXmasPage(),
+    new FractalXmasPage(),
     new ProblemPage(),
+    new LaureePage(),
 ]
     
 function setupInterval(fn, seconds) {
