@@ -154,3 +154,14 @@ body {
     border: none;
 }
 
+.embed {
+    display: none;
+    height: 920px;
+}
+
+.embed iframe {
+    width: 100%;
+    height: 920px;
+    border: none;
+}
+

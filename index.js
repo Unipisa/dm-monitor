@@ -6,8 +6,23 @@ const pages = [
     }),
     new EventsAndVisitorsPage(),
     new FractalXmasPage(),
-    new ProblemPage(),
     new LaureePage(),
+    new EmbedPage({
+        url: "https://lab.phc.dm.unipi.it/problemi/jumbotron",
+        duration: 60000,
+        priority: () => {
+            // show with high priority
+            // between 7pm and 7am
+            const date = moment().tz("Europe/Rome").format('HH-mm')
+            if (date >= '19-00' || date <= '07-00') return 1
+            return 0
+        }    
+    }),
+    new EmbedPage({
+        url: "https://montblanc.panomax.com/", 
+        duration: 10000,
+        priority: 1,
+    }),
 ]
     
 function setupInterval(fn, seconds) {
