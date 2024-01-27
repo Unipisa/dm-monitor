@@ -1,5 +1,5 @@
 const pages = [
-    new SpecialEventPage({
+    new FullScreenImagePage({
         imageUrl: "images/colloquium_gray.png?d=20231213x",
         start: "2024-01-27 06:00",
         end: "2024-01-27 18:44"

@@ -14,8 +14,8 @@ class LaureePage {
     }
 
 	priority() {
-        return 1
         return 0 // disabled
+        return 1
 	}
 }
 

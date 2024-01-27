@@ -1,4 +1,4 @@
-class SpecialEventPage {
+class FullScreenImagePage {
     constructor({imageUrl,start,end}) {
         this.imageUrl = imageUrl
         this.start = start
