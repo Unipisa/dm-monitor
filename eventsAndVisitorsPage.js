@@ -1,15 +1,53 @@
 class EventsAndVisitorsPage {
+    constructor() {
+        this.lastUpdate = null
+        this.reload()
+        // Block of routines that periodically poll events from different sources and 
+        // update the relevant blocks in the HTML
+        setupInterval(() => this.reload(), 600)
+
+        // Scroll effect for the visitor block
+        setInterval(scrollVisitors, 100)
+    }
+
+    async reload() {
+        this.events_html = await loadEvents()
+        this.visitors_html = await loadVisitors()
+        this.lastUpdate = new Date()
+    }
+
 	start() {
-		$('.visitors, .eventi').fadeIn(effectDuration); 
+        if (this.eventi) throw Error(`reentrant call`)
+        this.eventi = document.createElement('div')
+        this.eventi.className = 'eventi'
+        this.eventi.innerHTML = this.events_html
+
+        this.visitors = document.createElement('div')
+        this.visitors.className = 'visitors'
+        this.visitors.innerHTML = this.visitors_html
+
+        document.body.appendChild(this.eventi)
+        document.body.appendChild(this.visitors)
+		$('.visitors, .eventi').fadeIn(500) 
 	}
 
 	stop(callback) {
-		$('.visitors, .eventi').fadeOut(effectDuration);
-		setTimeout(callback, effectDuration);
+        const eventi = this.eventi
+        const visitors = this.visitors
+        this.eventi = null
+        this.visitors = null
+		$('.eventi').fadeOut(effectDuration, () => {
+            eventi.remove()
+            callback()
+        })
+		$('.visitors').fadeOut(effectDuration, () => {
+            visitors.remove()
+        })
 	}
 
-	isActive() {
-		return true;
+	priority() {
+        if (!this.lastUpdate) return 0
+		return 1
 	}
 
 };
@@ -93,12 +131,12 @@ async function loadEvents() {
         }
     }
 
-    console.log(valid_events)
+    // console.log(valid_events)
 
-    $('.eventi').html('');
     const number_of_events = valid_events.length < 3 ? valid_events.length : 3
-
     
+    
+    let html = '';
     for (var i = 0; i < number_of_events; i++) {
         let clock_icon = '<i class="fa-solid fa-clock"></i>';
         let venue_icon = `<i class="fa-solid fa-location-dot"></i>`;
@@ -151,8 +189,9 @@ async function loadEvents() {
         </h3>
         </div>
         `;
-        $('.eventi').append(el);
+        html += el;
     }
+    return html
 }
 
 async function loadVisitors() {
@@ -170,8 +209,7 @@ async function loadVisitors() {
     
     visits.sort((a,b) => a.startDate.localeCompare(b.startDate)).reverse()
     
-    $('.visitors').html(`<h2>Current visitors</h2><div class="visitors-container"></div>`)
-    
+    let html = '<h2>Current visitors</h2><div class="visitors-container">'
     for (const visit of visits) {
         const startDay = moment.utc(visit.startDate).format('DD')
         const startMonth = moment.utc(visit.startDate).format('MMM')
@@ -199,9 +237,11 @@ async function loadVisitors() {
         <br>
         ${personLine}
         </div>`
-
-        $('.visitors-container').append(el)
+        html += el
     }
+    html +='</div>'
+
+    return html
 }
 
 function formatPerson(person) {

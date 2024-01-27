@@ -1,18 +1,28 @@
 class ProblemPage {
 	start() {
-		$('.problem').fadeIn(effectDuration);
+        if (this.div) throw Error(`reentrant call`)
+        this.div = document.createElement('div')
+        this.div.className = 'problem'
+        this.div.innerHTML = `
+            <iframe src="https://lab.phc.dm.unipi.it/problemi/jumbotron"></iframe>
+        `
+        document.body.appendChild(this.div)
+		$('.problem').fadeIn(500)
 	}
 
 	stop(callback) {
-		$('.problem').fadeOut(effectDuration);
-		setTimeout(callback, effectDuration);
-		setTimeout(function() {
-                       document.querySelector('.problem iframe').src+='';
-		}, effectDuration);
+        const div = this.div
+		$('.problem').fadeOut(500, () => {
+            document.querySelector('.problem iframe').src+='';
+            div.remove()
+            callback()    
+        })
+        this.div = null
 	}
 
-	isActive() {
-		return true
+	priority() {
+		return 1 // testing
+        return 0 // disabled
 	}
 }
 
