@@ -155,8 +155,10 @@ body {
 }
 
 .embed {
+    position: absolute;
     display: none;
     height: 920px;
+    width: 100%;
 }
 
 .embed iframe {
