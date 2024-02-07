@@ -1,9 +1,9 @@
 const pages = [
-    // new FullScreenImagePage({
-    //     imageUrl: "images/colloquium_levine.png?d=20231213x",
-    //     start: "2024-02-07 06:00",
-    //     end: "2024-02-07 18:44"
-    // }),
+    new FullScreenImagePage({
+        imageUrl: "images/colloquium_levine.png?d=20231213x",
+        start: "2024-02-19 06:00",
+        end: "2024-02-19 18:44"
+    }),
 
     new EventsAndVisitorsPage(),
 
@@ -11,43 +11,43 @@ const pages = [
 
     // new LaureePage(),
 
-    new EmbedPage({
-        url: "https://lab.phc.dm.unipi.it/problemi/jumbotron",
-        duration: 60000,
-        priority: () => {
-            // show with high priority
-            // between 7pm and 7am
-            const date = moment().tz("Europe/Rome").format('HH-mm')
-            if (date >= '19-00' || date <= '07-00') return 2
-            else return 0
-        }    
-    }),
+//    new EmbedPage({
+//        url: "https://lab.phc.dm.unipi.it/problemi/jumbotron",
+//        duration: 60000,
+//        priority: () => {
+//            // show with high priority
+//            // between 7pm and 7am
+//            const date = moment().tz("Europe/Rome").format('HH-mm')
+//            if (date >= '19-00' || date <= '07-00') return 2
+//            else return 0
+//        }    
+//    }),
 
-    new EmbedPage({
-        url: "https://montblanc.panomax.com/", 
-        duration: 60000,
-        priority: () => {
-            // show only in minute 14
-            const date = moment().tz("Europe/Rome").format('mm')
-            if (date === '42') return 3
-            else return 0
-        },
-        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
-        delay: 10000,
-    }),
+//    new EmbedPage({
+//        url: "https://montblanc.panomax.com/", 
+//        duration: 60000,
+//        priority: () => {
+//            // show only in minute 14
+//            const date = moment().tz("Europe/Rome").format('mm')
+//            if (date === '42') return 3
+//            else return 0
+//        },
+//        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
+//        delay: 10000,
+//    }),
 
-    new EmbedPage({
-        url: "https://zoncolan.panomax.com/", 
-        duration: 60000,
-        priority: () => {
-            // show only in minute 19
-            const date = moment().tz("Europe/Rome").format('mm')
-            if (date === '19') return 3
-            else return 0
-        },
-        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
-        delay: 10000,
-    }),
+//    new EmbedPage({
+//        url: "https://zoncolan.panomax.com/", 
+//        duration: 60000,
+//        priority: () => {
+//            // show only in minute 19
+//            const date = moment().tz("Europe/Rome").format('mm')
+//            if (date === '19') return 3
+//            else return 0
+//        },
+//        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
+//        delay: 10000,
+//    }),
 ]
     
 function setupInterval(fn, seconds) {

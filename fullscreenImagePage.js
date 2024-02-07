@@ -1,8 +1,8 @@
 class FullScreenImagePage {
     constructor({imageUrl,start,end}) {
         this.imageUrl = imageUrl
-        this.start = start
-        this.end = end
+        this.startDate = start
+        this.endDate = end
         console.log(`constructor ${this.start}`)
     }
 
@@ -13,7 +13,7 @@ class FullScreenImagePage {
         }
         this.div = document.createElement('div')
         this.div.className = 'special'
-        this.div.innerHTML = `<img class="fullscreen-img" src="${imageUrl}"/>`
+        this.div.innerHTML = `<img class="fullscreen-img" src="${this.imageUrl}"/>`
         document.body.appendChild(this.div)
         $(this.div).fadeIn();
 	}
@@ -34,8 +34,8 @@ class FullScreenImagePage {
     }
 
 	priority() {
-        const showSpecialStart = moment.tz(this.start, "Europe/Rome").unix()
-        const showSpecialEnd   = moment.tz(this.end, "Europe/Rome").unix()
+        const showSpecialStart = moment.tz(this.startDate, "Europe/Rome").unix()
+        const showSpecialEnd   = moment.tz(this.endDate, "Europe/Rome").unix()
 		if (moment().unix() >= showSpecialStart && moment().unix() <= showSpecialEnd) {
             return 2
         }
