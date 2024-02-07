@@ -1,9 +1,9 @@
 const pages = [
-    new FullScreenImagePage({
-        imageUrl: "images/colloquium_levine.png?d=20231213x",
-        start: "2024-02-07 06:00",
-        end: "2024-02-07 18:44"
-    }),
+    // new FullScreenImagePage({
+    //     imageUrl: "images/colloquium_levine.png?d=20231213x",
+    //     start: "2024-02-07 06:00",
+    //     end: "2024-02-07 18:44"
+    // }),
 
     new EventsAndVisitorsPage(),
 
