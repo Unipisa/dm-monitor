@@ -1,8 +1,9 @@
 class FullScreenImagePage {
-    constructor({imageUrl,start,end}) {
+    constructor({imageUrl,start,end,test}) {
         this.imageUrl = imageUrl
         this.startDate = start
         this.endDate = end
+        this.test = test
         console.log(`constructor ${this.start}`)
     }
 
@@ -34,6 +35,7 @@ class FullScreenImagePage {
     }
 
 	priority() {
+        if (this.test) return 1
         const showSpecialStart = moment.tz(this.startDate, "Europe/Rome").unix()
         const showSpecialEnd   = moment.tz(this.endDate, "Europe/Rome").unix()
 		if (moment().unix() >= showSpecialStart && moment().unix() <= showSpecialEnd) {

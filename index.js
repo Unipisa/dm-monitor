@@ -1,8 +1,12 @@
+// true se si aggiunge ?test alla fine dell'URL
+const TEST = window.location.search.includes('test')
+
 const pages = [
     new FullScreenImagePage({
         imageUrl: "images/colloquium_levine.png?d=20231213x",
         start: "2024-02-19 06:00",
-        end: "2024-02-19 18:44"
+        end: "2024-02-19 18:44",
+        test: TEST, // mostra sempre in modalità test
     }),
 
     new EventsAndVisitorsPage(),
@@ -15,6 +19,7 @@ const pages = [
         url: "https://lab.phc.dm.unipi.it/problemi/jumbotron",
         duration: 60000,
         priority: () => {
+            if (TEST) return 1 // mostra sempre in modalità test 
             // show with high priority
             // between 7pm and 7am
             const date = moment().tz("Europe/Rome").format('HH-mm')
@@ -27,6 +32,7 @@ const pages = [
         url: "https://montblanc.panomax.com/", 
         duration: 60000,
         priority: () => {
+            if (TEST) return 1 // mostra sempre in modalità test
             // show only in minute 14
             const date = moment().tz("Europe/Rome").format('mm')
             if (date === '42') return 3
@@ -40,6 +46,7 @@ const pages = [
         url: "https://zoncolan.panomax.com/", 
         duration: 60000,
         priority: () => {
+            if (TEST) return 1 // mostra sempre in modalità test
             // show only in minute 19
             const date = moment().tz("Europe/Rome").format('mm')
             if (date === '19') return 3
