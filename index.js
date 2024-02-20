@@ -33,7 +33,22 @@ const pages = [
         duration: 60000,
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test
-            // show only in minute 14
+            return 0 // disabled
+            // show only in minute 42
+            const date = moment().tz("Europe/Rome").format('mm')
+            if (date === '42') return 3
+            else return 0
+        },
+        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
+        delay: 10000,
+    }),
+
+    new EmbedPage({
+        url: "https://seiseralm-puflatsch.panomax.com/", 
+        duration: 60000,
+        priority: () => {
+            if (TEST) return 1 // mostra sempre in modalità test
+            // show only in minute 42
             const date = moment().tz("Europe/Rome").format('mm')
             if (date === '42') return 3
             else return 0
