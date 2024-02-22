@@ -137,8 +137,7 @@ async function loadEvents() {
 
     // console.log(valid_events)
 
-    const number_of_events = valid_events.length < 3 ? valid_events.length : 3
-    
+    const number_of_events = Math.max(valid_events.length,4)
     
     let html = '';
     for (var i = 0; i < number_of_events; i++) {
@@ -178,7 +177,7 @@ async function loadEvents() {
         }
         else if (valid_events[i].type == 'seminar') {
             tag = '<span class="badge badge-sm badge-primary small">Seminar</span>';
-            speaker = "(" + formatPerson(valid_events[i].speaker) + ")"
+            speaker = formatPerson(valid_events[i].speaker)
         }
         
         let el = `
@@ -189,7 +188,8 @@ async function loadEvents() {
         ${tag}
         </div>
         <h3>
-        ${valid_events[i].title} ${speaker}
+        ${speaker} <br />
+        <i style="font-size: 90%">${valid_events[i].title}</i>
         </h3>
         </div>
         `;
@@ -252,10 +252,10 @@ function formatPerson(person) {
 	var affiliationsLine = "";
         try {
             const affiliations = person?.affiliations.map(_ => _.name)
-            affiliationsLine = affiliations?` &mdash; ${affiliations.join(', ')}`:''
+            affiliationsLine = affiliations?` (${affiliations.join(', ')})`:''
         } catch (error) {
             // No valid affiliations, keep an empty string
         }
 
-        return `<b>${person.firstName} ${person.lastName}</b> ${affiliationsLine}`
+        return `<b>${person.firstName} ${person.lastName}</b> <span style='font-size: 75%'>${affiliationsLine}</span>`
 }

@@ -38,22 +38,22 @@ body {
 }
 
 .event {
-    padding: 1rem;
+    padding: 10px;
     border-top: 3px groove #003c71;
-    padding-top: 30px;
-    margin-bottom: 30px;
+    padding-top: 10px;
+    margin-bottom: 10px;
 }
 
 .event > h3 {
     color: #003c71;
     font-family: sans;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
+    font-size: 2rem;
+    margin-bottom: 5px;
     margin-top: 0px;
 }
 
 .eventi {
-    margin-top: 20px;
+    margin-top: 0px;
     width: 1200px;
     display: none;
 }
