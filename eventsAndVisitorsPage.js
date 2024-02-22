@@ -137,7 +137,7 @@ async function loadEvents() {
 
     // console.log(valid_events)
 
-    const number_of_events = Math.max(valid_events.length,4)
+    const number_of_events = Math.min(valid_events.length,4)
     
     let html = '';
     for (var i = 0; i < number_of_events; i++) {
