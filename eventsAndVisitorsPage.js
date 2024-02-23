@@ -148,21 +148,23 @@ async function loadEvents() {
         var from = ""
 
         if (valid_events[i].type == 'conference') {
-            to = moment.utc(valid_events[i].endDate).tz("Europe/Rome")
-            from = moment.utc(valid_events[i].startDate).tz("Europe/Rome")
+            to = moment.utc(valid_events[i].endDate)
+            from = moment.utc(valid_events[i].startDate)
+            from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD')}</span>`;
         }
         else {
             // Seminar here
             to = moment.utc(valid_events[i].startDatetime).add(valid_events[i].duration, 'minutes').tz("Europe/Rome")
             from = moment.utc(valid_events[i].startDatetime).tz("Europe/Rome")
+
+            if (from >= now && to <= now) {
+                from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
+            } else {
+                from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
+            }
         }
 
-        from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
-        
-        if (from >= now && to <= now) {
-            from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
-        }
-        
+                
         let venue = `<span class="badge badge-sm badge-secondary">${venue_icon} ${valid_events[i].conferenceRoom?.name}</span>`
         
         var border_override = "";
@@ -188,7 +190,7 @@ async function loadEvents() {
         ${tag}
         </div>
         <h3>
-        ${speaker} <br />
+        ${speaker?speaker+'<br />':''}
         <i style="font-size: 90%">${valid_events[i].title}</i>
         </h3>
         </div>
