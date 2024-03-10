@@ -1,5 +1,11 @@
-// true se si aggiunge ?test alla fine dell'URL
-const TEST = window.location.search.includes('test')
+
+import { TEST } from './constants'
+
+import { EmbedPage } from "./pages/embedPage"
+import { EventsAndVisitorsPage } from "./pages/eventsAndVisitorsPage"
+import { FractalXmasPage } from "./pages/fractalXmasPage"
+import { FullScreenImagePage } from "./pages/fullscreenImagePage"
+import { setupInterval } from './utils'
 
 const pages = [
     new FullScreenImagePage({
@@ -72,17 +78,6 @@ const pages = [
     }),
 ]
     
-function setupInterval(fn, seconds) {
-    try {
-        fn()
-    }
-    catch (error) {
-        console.log(error)
-    }
-
-    setInterval(fn, seconds * 1000)
-}
-
 function startLoop() {
     // Routine that updates the clock
     setupInterval(updateClock, 1)
@@ -96,7 +91,6 @@ function updateClock() {
     $('#clock').html(`${now.format('ddd MMM DD')} &#8212; ${now.format('HH:mm')} <span style='font-size: 28px'>${now.format("ss")}</span>`)
 }
 
-const effectDuration = 500
 
 class Event {
     start() {
@@ -173,3 +167,4 @@ async function cycleScreen() {
     console.log(`non dovrebbe succedere!`)
 }
 
+window.addEventListener('DOMContentLoaded', () => startLoop())

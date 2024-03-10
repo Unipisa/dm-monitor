@@ -1,4 +1,4 @@
-class EmbedPage {
+export class EmbedPage {
     constructor({url,priority,duration,style, delay}) {
         this.durationProp = duration
         this.priorityProp = priority

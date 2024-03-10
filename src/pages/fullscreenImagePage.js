@@ -1,4 +1,4 @@
-class FullScreenImagePage {
+export class FullScreenImagePage {
     constructor({imageUrl,start,end,test}) {
         this.imageUrl = imageUrl
         this.startDate = start

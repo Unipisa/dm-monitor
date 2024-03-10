@@ -1,4 +1,6 @@
-class EventsAndVisitorsPage {
+import { setupInterval } from "../utils"
+
+export class EventsAndVisitorsPage {
     constructor() {
         this.lastUpdate = null
         this.reload()

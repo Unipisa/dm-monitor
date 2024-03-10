@@ -1,4 +1,4 @@
-class FractalXmasPage {
+export class FractalXmasPage {
 	start() {
         if (this.div) throw Error('reentrant call')
         this.div = document.createElement('div')
