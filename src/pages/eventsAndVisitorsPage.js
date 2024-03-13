@@ -1,3 +1,5 @@
+import { EFFECT_DURATION } from '../constants'
+
 import { setupInterval } from "../utils"
 
 export class EventsAndVisitorsPage {
@@ -38,11 +40,11 @@ export class EventsAndVisitorsPage {
         const visitors = this.visitors
         this.eventi = null
         this.visitors = null
-		$('.eventi').fadeOut(effectDuration, () => {
+		$('.eventi').fadeOut(EFFECT_DURATION, () => {
             eventi.remove()
             callback()
         })
-		$('.visitors').fadeOut(effectDuration, () => {
+		$('.visitors').fadeOut(EFFECT_DURATION, () => {
             visitors.remove()
         })
 	}
