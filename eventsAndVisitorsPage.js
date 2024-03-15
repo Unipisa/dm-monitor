@@ -179,7 +179,11 @@ async function loadEvents() {
         }
         else if (valid_events[i].type == 'seminar') {
             tag = '<span class="badge badge-sm badge-primary small">Seminar</span>';
-            speaker = formatPerson(valid_events[i].speaker)
+            if (valid_events[i].speakers) {
+                speaker = valid_events[i].speakers.map(speaker => formatPerson(speaker)).join(', ')
+            } else {
+                speaker = formatPerson(valid_events[i].speaker)
+            }
         }
         
         let el = `
