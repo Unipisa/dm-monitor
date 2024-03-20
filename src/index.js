@@ -1,17 +1,16 @@
-
 import { TEST } from './constants'
 
-import { EmbedPage } from "./pages/embedPage"
-import { EventsAndVisitorsPage } from "./pages/eventsAndVisitorsPage"
-import { FractalXmasPage } from "./pages/fractalXmasPage"
-import { FullScreenImagePage } from "./pages/fullscreenImagePage"
+import { EmbedPage } from './pages/embedPage'
+import { EventsAndVisitorsPage } from './pages/eventsAndVisitorsPage'
+import { FractalXmasPage } from './pages/fractalXmasPage'
+import { FullScreenImagePage } from './pages/fullscreenImagePage'
 import { setupInterval } from './utils'
 
 const pages = [
     new FullScreenImagePage({
-        imageUrl: "images/colloquium_levine.png?d=20231213x",
-        start: "2024-02-19 06:00",
-        end: "2024-02-19 18:44",
+        imageUrl: 'images/colloquium_levine.png?d=20231213x',
+        start: '2024-02-19 06:00',
+        end: '2024-02-19 18:44',
         test: TEST, // mostra sempre in modalità test
     }),
 
@@ -22,79 +21,82 @@ const pages = [
     // new LaureePage(),
 
     new EmbedPage({
-        url: "https://lab.phc.dm.unipi.it/problemi/jumbotron",
+        url: 'https://lab.phc.dm.unipi.it/problemi/jumbotron',
         duration: 60000,
         priority: () => {
-            if (TEST) return 1 // mostra sempre in modalità test 
+            if (TEST) return 1 // mostra sempre in modalità test
             // show with high priority
             // between 7pm and 7am
-            const date = moment().tz("Europe/Rome").format('HH-mm')
+            const date = moment().tz('Europe/Rome').format('HH-mm')
             if (date >= '19-00' || date <= '07-00') return 2
             else return 0
-        }    
+        },
     }),
 
     new EmbedPage({
-        url: "https://montblanc.panomax.com/", 
+        url: 'https://montblanc.panomax.com/',
         duration: 60000,
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test
             return 0 // disabled
             // show only in minute 42
-            const date = moment().tz("Europe/Rome").format('mm')
+            const date = moment().tz('Europe/Rome').format('mm')
             if (date === '42') return 3
             else return 0
         },
-        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
+        style: 'margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2',
         delay: 10000,
     }),
 
     new EmbedPage({
-        url: "https://seiseralm-puflatsch.panomax.com/", 
+        url: 'https://seiseralm-puflatsch.panomax.com/',
         duration: 60000,
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test
             // show only in minute 42
-            const date = moment().tz("Europe/Rome").format('mm')
+            const date = moment().tz('Europe/Rome').format('mm')
             if (date === '42') return 3
             else return 0
         },
-        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
+        style: 'margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2',
         delay: 10000,
     }),
 
     new EmbedPage({
-        url: "https://zoncolan.panomax.com/", 
+        url: 'https://zoncolan.panomax.com/',
         duration: 60000,
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test
             // show only in minute 19
-            const date = moment().tz("Europe/Rome").format('mm')
+            const date = moment().tz('Europe/Rome').format('mm')
             if (date === '19') return 3
             else return 0
         },
-        style: "margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2",
+        style: 'margin-top: -150px; margin-bottom: -100px; z-index: -1; zoom: 1.2',
         delay: 10000,
     }),
 ]
-    
+
 function startLoop() {
     // Routine that updates the clock
     setupInterval(updateClock, 1)
 
-    // Routine that cycles the visibility of the different parts. 
+    // Routine that cycles the visibility of the different parts.
     setupInterval(cycleScreen, 5)
 }
 
 function updateClock() {
-    const now = moment().tz("Europe/Rome")
-    $('#clock').html(`${now.format('ddd MMM DD')} &#8212; ${now.format('HH:mm')} <span style='font-size: 28px'>${now.format("ss")}</span>`)
+    const now = moment().tz('Europe/Rome')
+    $('#clock').html(
+        `${now.format('ddd MMM DD')} &#8212; ${now.format(
+            'HH:mm'
+        )} <span style='font-size: 28px'>${now.format('ss')}</span>`
+    )
 }
-
 
 class Event {
     start() {
-        // fade in 
+        // fade in
         // return the minimum number of seconds of visibility
     }
 
@@ -124,19 +126,19 @@ let currentPageTimestamp = null
 
 async function cycleScreen() {
     // choose a random page among pages with priority>0
-    // probability of choosing a page is proportional to 
+    // probability of choosing a page is proportional to
     // its priority
 
     if (pages.length == 0) return
 
-    const timeElapsedMilliseconds = (new Date()) - currentPageTimestamp
+    const timeElapsedMilliseconds = new Date() - currentPageTimestamp
     if (currentPage && timeElapsedMilliseconds < currentPage.duration()) {
         console.log(`wait longer...`)
         return
     }
 
     const priority = pages.map(p => p.priority())
-    const total = priority.reduce((a,b) => a+b, 0)
+    const total = priority.reduce((a, b) => a + b, 0)
     if (total === 0) {
         // nothing to show!
         if (currentPage) {
@@ -148,11 +150,19 @@ async function cycleScreen() {
 
     const r = Math.random() * total
     let sum = 0
-    for(let i=0; i<pages.length; i++) {
+    console.log(pages, priority)
+
+    for (let i = 0; i < pages.length; i++) {
         sum += priority[i]
+        console.log(sum, r)
         if (sum > r) {
             // choose this!
-            $("#bullets").html(priority.map((p,j) => (p>0?(i===j?'●':'○'):'')).filter(s=>(s!=='')).join(''))
+            $('#bullets').html(
+                priority
+                    .map((p, j) => (p > 0 ? (i === j ? '●' : '○') : ''))
+                    .filter(s => s !== '')
+                    .join('')
+            )
             const page = pages[i]
             if (currentPage === page) return
 
