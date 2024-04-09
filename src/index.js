@@ -37,7 +37,7 @@ const pages = [
         url: 'https://montblanc.panomax.com/',
         duration: 60000,
         priority: () => {
-            if (TEST) return 1 // mostra sempre in modalità test
+            // if (TEST) return 1 // mostra sempre in modalità test
             return 0 // disabled
             // show only in minute 42
             const date = moment().tz('Europe/Rome').format('mm')
@@ -63,7 +63,8 @@ const pages = [
     }),
 
     new EmbedPage({
-        url: 'https://zoncolan.panomax.com/',
+//        url: "https://zoncolan.panomax.com/", 
+        url: "https://cortina.panomax.com/",
         duration: 60000,
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test

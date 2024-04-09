@@ -110,10 +110,8 @@ async function loadEvents() {
 
     try {
         // let res = await fetch('https://www.dm.unipi.it/wp-json/wp/v2/unipievents?per_page=50');
-        let res_sem = await (await fetch('https://manage.dm.unipi.it/api/v0/public/seminars?from=now')).json()
-        let res_con = await (
-            await fetch('https://manage.dm.unipi.it/api/v0/public/conferences?from=now')
-        ).json()
+        let res_sem = await (await fetch('https://manage.dm.unipi.it/api/v0/public/seminars?from=now&_sort=startDatetime')).json()
+        let res_con = await (await fetch('https://manage.dm.unipi.it/api/v0/public/conferences?from=now&_sort=startDate')).json()
 
         const res_sem_aug = res_sem.data.map(x => {
             return { ...x, type: 'seminar' }
