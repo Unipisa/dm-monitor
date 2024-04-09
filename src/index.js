@@ -98,7 +98,6 @@ function updateClock() {
 class Event {
     start() {
         // fade in
-        // return the minimum number of seconds of visibility
     }
 
     stop(callback) {
@@ -132,10 +131,12 @@ async function cycleScreen() {
 
     if (pages.length == 0) return
 
-    const timeElapsedMilliseconds = new Date() - currentPageTimestamp
-    if (currentPage && timeElapsedMilliseconds < currentPage.duration()) {
-        console.log(`wait longer...`)
-        return
+    if (currentPage && currentPageTimestamp) {
+        const timeElapsedMilliseconds = new Date() - currentPageTimestamp
+        if (timeElapsedMilliseconds < currentPage.duration()) {
+            console.log(`wait longer...`)
+            return
+        }
     }
 
     const priority = pages.map(p => p.priority())
@@ -179,3 +180,8 @@ async function cycleScreen() {
 }
 
 window.addEventListener('DOMContentLoaded', () => startLoop())
+document.onkeydown = function(e) {
+    console.log(`key pressed: [${e.key}]`)
+    currentPageTimestamp = null // force termination of current page
+    cycleScreen()
+}
