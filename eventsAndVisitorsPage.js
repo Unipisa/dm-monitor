@@ -80,21 +80,8 @@ function scrollVisitors() {
 }
 
 function sortEvents(eventA, eventB) {
-    var dateA = null;
-    if (eventA.type == 'conference') {
-        dateA = new Date(eventA.startDate)
-    }
-    else {
-        dateA = new Date(eventA.startDatetime)
-    }
-
-
-    if (eventB.type == 'conference') {
-        dateB = new Date(eventB.startDate)
-    }
-    else {
-        dateB = new Date(eventB.startDatetime)
-    }
+    const dateA = new Date(eventA.startDatetime)
+    const dateB = new Date(eventB.startDatetime)
 
     return dateA.getTime() - dateB.getTime()
 }
@@ -111,7 +98,7 @@ async function loadEvents() {
             return {  ...x, type: 'seminar' }
         })
         const res_con_aug = res_con.data.map((x) => {
-            return { ...x, type: 'conference' }
+            return { ...x, type: 'conference', startDatetime: x.startDate}
         })
         data = [ ...res_sem_aug, ...res_con_aug ]
         data.sort(sortEvents)
@@ -135,9 +122,21 @@ async function loadEvents() {
         }
     }
 
+    let number_of_events_in_the_same_day = 0;
+    var first_event_date = null;
+    for (var i = 0; i < valid_events.length; i++) {
+        var event_date = valid_events[i]?moment.utc(valid_events[i].startDatetime).tz("Europe/Rome").format('YYYY-MM-DD'):'';
+        if (event_date && !first_event_date) first_event_date = event_date;
+        console.log(`${i} ${first_event_date} == ${event_date} ${valid_events[i].startDatetime}`)
+        if (event_date == first_event_date) {
+            number_of_events_in_the_same_day++;
+        }
+    }
+
     // console.log(valid_events)
 
-    const number_of_events = Math.min(valid_events.length,4)
+    const number_of_events = Math.min(valid_events.length,Math.max(4, number_of_events_in_the_same_day));
+    const smaller = (number_of_events > 4)
     
     let html = '';
     for (var i = 0; i < number_of_events; i++) {
@@ -150,7 +149,7 @@ async function loadEvents() {
         if (valid_events[i].type == 'conference') {
             to = moment.utc(valid_events[i].endDate)
             from = moment.utc(valid_events[i].startDate)
-            from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD')}</span>`;
+            from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD')}</span>`;
         }
         else {
             // Seminar here
@@ -160,12 +159,12 @@ async function loadEvents() {
             if (from >= now && to <= now) {
                 from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
             } else {
-                from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
+                from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
             }
         }
 
                 
-        let venue = `<span class="badge badge-sm badge-secondary">${venue_icon} ${valid_events[i].conferenceRoom?.name}</span>`
+        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${valid_events[i].conferenceRoom?.name}</span>`
         
         var border_override = "";
         if (i == 0) {
@@ -175,10 +174,10 @@ async function loadEvents() {
         var tag = "";
         var speaker = "";
         if (valid_events[i].type == 'conference') {
-            tag = '<span class="badge badge-sm badge-primary">Conference</span>';
+            tag = '<span class="badge badge-sm badge-primary smaller">Conference</span>';
         }
         else if (valid_events[i].type == 'seminar') {
-            tag = '<span class="badge badge-sm badge-primary small">Seminar</span>';
+            tag = '<span class="badge badge-sm badge-primary smaller">Seminar</span>';
             if (valid_events[i].speakers) {
                 speaker = valid_events[i].speakers.map(speaker => formatPerson(speaker)).join(', ')
             } else {
@@ -187,15 +186,15 @@ async function loadEvents() {
         }
         
         let el = `
-        <div class="event" ${border_override}>
+        <div class="event ${smaller?'smaller':''}" ${border_override}>
         <div class="venue">
         ${from} 
         ${venue}
         ${tag}
         </div>
         <h3>
-        ${speaker?speaker+'<br />':''}
-        <i style="font-size: 90%">${valid_events[i].title}</i>
+        ${speaker?speaker+(smaller?'':'<br />'):''}
+        <i class="title">${valid_events[i].title}</i>
         </h3>
         </div>
         `;
@@ -263,5 +262,5 @@ function formatPerson(person) {
             // No valid affiliations, keep an empty string
         }
 
-        return `<b>${person.firstName} ${person.lastName}</b> <span style='font-size: 75%'>${affiliationsLine}</span>`
+        return `<b class="speaker">${person.firstName} ${person.lastName}</b> <span class="affiliation">${affiliationsLine}</span>`
 }

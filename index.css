@@ -47,7 +47,7 @@ body {
 .event > h3 {
     color: #003c71;
     font-family: sans;
-    font-size: 2rem;
+    font-size: 200%;
     margin-bottom: 5px;
     margin-top: 0px;
 }
@@ -73,6 +73,10 @@ body {
     font-family: sans;
     font-variant: bold;
     margin-bottom: 15px;
+}
+
+.smaller .venue {
+    margin-bottom: 0px;
 }
 
 .visitors {
@@ -167,3 +171,22 @@ body {
     border: none;
 }
 
+.event.smaller {
+    font-size: 90%;
+}
+
+.badge.smaller {
+    font-size: 60%;
+}
+
+.speaker {
+    font-size: 100%;
+}
+
+.affiliation {
+    font-size: 80%;
+}
+
+.title {
+    font-size: 80%;
+}
