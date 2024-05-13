@@ -1,3 +1,7 @@
+const DM_MANAGER_HOST =
+    'https://manage.dm.unipi.it'
+//    'https://manage.develop.lb.cs.dm.unipi.it'
+
 class EventsAndVisitorsPage {
     constructor() {
         this.lastUpdate = null
@@ -87,84 +91,87 @@ function sortEvents(eventA, eventB) {
 }
 
 async function loadEvents() {
-    var data = null;
-
+    var events = [];
+    
+    // ATTENZIONE: le date dei seminari sono in UTC, comprendendo anche l'ora.
+    // invece le date delle conferenze sono attualmente la mezzanotte di UTC (e non dell'ora locale)
+    const midnight = moment().tz("Europe/Rome").startOf('day').utc().format()
+    const today = moment().format('YYYY-MM-DD')
+    
     try {
         // let res = await fetch('https://www.dm.unipi.it/wp-json/wp/v2/unipievents?per_page=50');
-        let res_sem = await (await fetch('https://manage.dm.unipi.it/api/v0/public/seminars?from=now&_sort=startDatetime')).json()
-        let res_con = await (await fetch('https://manage.dm.unipi.it/api/v0/public/conferences?from=now&_sort=startDate')).json()
+        let res_sem = await (await fetch(DM_MANAGER_HOST + `/api/v0/public/seminars?from=${midnight}&_sort=startDatetime`)).json()
+        let res_con = await (await fetch(DM_MANAGER_HOST + `/api/v0/public/conferences?from=${today}&_sort=startDate`)).json()
 
         const res_sem_aug = res_sem.data.map((x) => {
-            return {  ...x, type: 'seminar' }
+            return {  ...x, 
+                type: 'seminar',
+                startDatetime: moment.utc(x.startDatetime).tz("Europe/Rome"),
+                endDatetime: moment.utc(x.startDatetime).tz("Europe/Rome").add(x.duration, 'minutes'),
+            }
         })
         const res_con_aug = res_con.data.map((x) => {
-            return { ...x, type: 'conference', startDatetime: x.startDate}
+            return { ...x, 
+                type: 'conference', 
+                startDatetime: moment.tz(x.startDate, "Europe/Rome").startOf('day'),
+                endDatetime: moment.tz(x.endDate || x.startDate, "Europe/Rome").startOf('day').add(1, 'days'),
+            }
         })
-        data = [ ...res_sem_aug, ...res_con_aug ]
-        data.sort(sortEvents)
+        events = [ ...res_sem_aug, ...res_con_aug ]
+        events.sort((x,y) => x.startDatetime - y.startDatetime)
+        // console.log(JSON.stringify({events}, null, 2))
     } catch (error) {
        return;
     }
 
-    var valid_events = [];
     const now = moment.utc().tz("Europe/Rome")
-
     // We only collect the events that end in the future.
-    for (var i = 0; i < data.length; i++) {
-        if (data[i].startDatetime) {
-            let eventDate = moment.utc(data[i].startDatetime).tz("Europe/Rome")
-            if (now <= moment.utc(data[i].startDatetime).tz("Europe/Rome").add(data[i].duration, "minutes")) {
-                valid_events.push(data[i])
-            }
-        }
-        else {
-            valid_events.push(data[i])
-        }
-    }
+    events = events.filter(x => (now <= x.endDatetime));
 
     let number_of_events_in_the_same_day = 0;
     var first_event_date = null;
-    for (var i = 0; i < valid_events.length; i++) {
-        var event_date = valid_events[i]?moment.utc(valid_events[i].startDatetime).tz("Europe/Rome").format('YYYY-MM-DD'):'';
+    for (var i = 0; i < events.length; i++) {
+        var event_date = events[i]?events[i].startDatetime.format('YYYY-MM-DD'):'';
         if (event_date && !first_event_date) first_event_date = event_date;
-        console.log(`${i} ${first_event_date} == ${event_date} ${valid_events[i].startDatetime}`)
         if (event_date == first_event_date) {
             number_of_events_in_the_same_day++;
         }
     }
 
-    // console.log(valid_events)
+    // console.log(events)
 
-    const number_of_events = Math.min(valid_events.length,Math.max(4, number_of_events_in_the_same_day));
+    const number_of_events = Math.min(events.length,Math.max(4, number_of_events_in_the_same_day));
     const smaller = (number_of_events > 4)
     
     let html = '';
     for (var i = 0; i < number_of_events; i++) {
+        const event = events[i]
         let clock_icon = '<i class="fa-solid fa-clock"></i>';
         let venue_icon = `<i class="fa-solid fa-location-dot"></i>`;
 
         var to = ""
         var from = ""
 
-        if (valid_events[i].type == 'conference') {
-            to = moment.utc(valid_events[i].endDate)
-            from = moment.utc(valid_events[i].startDate)
+        if (event.type == 'conference') {
+            to = moment.utc(event.endDate)
+            from = moment.utc(event.startDate)
             from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD')}</span>`;
         }
         else {
             // Seminar here
-            to = moment.utc(valid_events[i].startDatetime).add(valid_events[i].duration, 'minutes').tz("Europe/Rome")
-            from = moment.utc(valid_events[i].startDatetime).tz("Europe/Rome")
+            to = event.endDatetime
+            from = event.startDatetime
 
-            if (from >= now && to <= now) {
+            if (from <= now && now <= to) {
                 from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
             } else {
+                console.log(`> ${from} ${now} ${to}`)
                 from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
             }
         }
 
                 
-        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${valid_events[i].conferenceRoom?.name}</span>`
+        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom?.name}</span>`
         
         var border_override = "";
         if (i == 0) {
@@ -173,15 +180,15 @@ async function loadEvents() {
         
         var tag = "";
         var speaker = "";
-        if (valid_events[i].type == 'conference') {
+        if (event.type == 'conference') {
             tag = '<span class="badge badge-sm badge-primary smaller">Conference</span>';
         }
-        else if (valid_events[i].type == 'seminar') {
+        else if (event.type == 'seminar') {
             tag = '<span class="badge badge-sm badge-primary smaller">Seminar</span>';
-            if (valid_events[i].speakers) {
-                speaker = valid_events[i].speakers.map(speaker => formatPerson(speaker)).join(', ')
+            if (event.speakers) {
+                speaker = event.speakers.map(speaker => formatPerson(speaker)).join(', ')
             } else {
-                speaker = formatPerson(valid_events[i].speaker)
+                speaker = formatPerson(event.speaker)
             }
         }
         
@@ -194,7 +201,7 @@ async function loadEvents() {
         </div>
         <h3>
         ${speaker?speaker+(smaller?'':'<br />'):''}
-        <i class="title">${valid_events[i].title}</i>
+        <i class="title">${event.title}</i>
         </h3>
         </div>
         `;
@@ -207,7 +214,7 @@ async function loadVisitors() {
     var visits = [];
 
     try {
-        const endpoint = 'https://manage.dm.unipi.it/api/v0/public/visits';    
+        const endpoint = DM_MANAGER_HOST + '/api/v0/public/visits';    
         const res = await fetch(endpoint)
         visits = (await res.json()).data
     }
