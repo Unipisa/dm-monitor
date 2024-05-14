@@ -4,7 +4,7 @@ class FullScreenImagePage {
         this.startDate = start
         this.endDate = end
         this.test = test
-        console.log(`constructor ${this.start}`)
+        // console.log(`constructor ${this.start}`)
     }
 
 	start() {

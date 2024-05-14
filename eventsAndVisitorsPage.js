@@ -6,46 +6,59 @@ class EventsAndVisitorsPage {
     constructor() {
         this.lastUpdate = null
         this.reload()
-        // Block of routines that periodically poll events from different sources and 
-        // update the relevant blocks in the HTML
+        // update the list of events and visitors every 10 minutes
+        // even if the page is not visible 
         setupInterval(() => this.reload(), 600)
-
-        // Scroll effect for the visitor block
-        setInterval(scrollVisitors, 100)
     }
 
     async reload() {
-        this.events_html = await loadEvents()
+        this.events = await loadEvents()
+        this.update()
         this.visitors_html = await loadVisitors()
         this.lastUpdate = new Date()
     }
 
+    update() {
+        // console.log('update ')
+        if (this.events) this.events_html = renderEvents(this.events)
+        if (this.events_div) this.events_div.innerHTML = this.events_html || 'loading...'
+        if (this.visitors_div) this.visitors_div.innerHTML = this.visitors_html || 'loading...'
+    }
+
 	start() {
-        if (this.eventi) throw Error(`reentrant call`)
-        this.eventi = document.createElement('div')
-        this.eventi.className = 'eventi'
-        this.eventi.innerHTML = this.events_html
+        if (this.events_div) throw Error(`reentrant call`)
+        this.events_div = document.createElement('div')
+        this.events_div.className = 'eventi'        // 
 
-        this.visitors = document.createElement('div')
-        this.visitors.className = 'visitors'
-        this.visitors.innerHTML = this.visitors_html
+        this.visitors_div = document.createElement('div')
+        this.visitors_div.className = 'visitors'
 
-        document.body.appendChild(this.eventi)
-        document.body.appendChild(this.visitors)
+        document.body.appendChild(this.events_div)
+        document.body.appendChild(this.visitors_div)
 		$('.visitors, .eventi').fadeIn(500) 
+
+        // Scroll effect for the visitor block
+        this.scrollVisitorsInterval = setInterval(scrollVisitors, 100)
+
+        // update the rendering of the events to enable the "IS RUNNING NOW" badge
+        // every 20 seconds
+        this.update()
+        this.updateInterval = setInterval(() => this.update(), 20000)
 	}
 
 	stop(callback) {
-        const eventi = this.eventi
-        const visitors = this.visitors
-        this.eventi = null
-        this.visitors = null
+        clearInterval(this.updateInterval)
+        clearInterval(this.scrollVisitorsInterval)
+        const events_div = this.events_div
+        const visitors_div = this.visitors_div
+        this.events_div = null
+        this.visitors_div = null
 		$('.eventi').fadeOut(effectDuration, () => {
-            eventi.remove()
+            events_div.remove()
             callback()
         })
 		$('.visitors').fadeOut(effectDuration, () => {
-            visitors.remove()
+            visitors_div.remove()
         })
 	}
 
@@ -83,13 +96,6 @@ function scrollVisitors() {
     }
 }
 
-function sortEvents(eventA, eventB) {
-    const dateA = new Date(eventA.startDatetime)
-    const dateB = new Date(eventB.startDatetime)
-
-    return dateA.getTime() - dateB.getTime()
-}
-
 async function loadEvents() {
     var events = [];
     
@@ -124,6 +130,12 @@ async function loadEvents() {
        return;
     }
 
+    // console.log(events)
+
+    return events
+}
+
+function renderEvents(events) {
     const now = moment.utc().tz("Europe/Rome")
     // We only collect the events that end in the future.
     events = events.filter(x => (now <= x.endDatetime));
@@ -138,11 +150,9 @@ async function loadEvents() {
         }
     }
 
-    // console.log(events)
-
     const number_of_events = Math.min(events.length,Math.max(4, number_of_events_in_the_same_day));
     const smaller = (number_of_events > 4)
-    
+
     let html = '';
     for (var i = 0; i < number_of_events; i++) {
         const event = events[i]
@@ -165,7 +175,6 @@ async function loadEvents() {
             if (from <= now && now <= to) {
                 from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
             } else {
-                console.log(`> ${from} ${now} ${to}`)
                 from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
             }
         }
@@ -207,7 +216,7 @@ async function loadEvents() {
         `;
         html += el;
     }
-    return html
+    return html || "No events to be shown...";
 }
 
 async function loadVisitors() {
