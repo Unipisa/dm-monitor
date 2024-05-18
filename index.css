@@ -37,6 +37,14 @@ body {
     font-size: 20px;   
 }
 
+#version {
+    position: fixed;
+    top: 2px;
+    right: 50px;
+    color: #757575;
+    font-size: 16px;   
+}
+
 .event {
     padding: 10px;
     border-top: 3px groove #003c71;
