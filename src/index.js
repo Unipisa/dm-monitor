@@ -1,14 +1,16 @@
+import { version as VERSION } from '../package.json'
 import { TEST } from './constants'
-
 import { EmbedPage } from './pages/embedPage'
 import { EventsAndVisitorsPage } from './pages/eventsAndVisitorsPage'
 import { FractalXmasPage } from './pages/fractalXmasPage'
 import { FullScreenImagePage } from './pages/fullscreenImagePage'
 import { setupInterval } from './utils'
 
+import colloquium_img from '../images/colloquium_huisken.png'
+
 const pages = [
     new FullScreenImagePage({
-        imageUrl: "images/colloquium_huisken.png?d=20231213x",
+        imageUrl: colloquium_img, 
         start: "2024-05-23 06:00",
         end: "2024-05-23 18:44",
         test: TEST, // mostra sempre in modalità test
@@ -37,8 +39,8 @@ const pages = [
         url: 'https://montblanc.panomax.com/',
         duration: 60000,
         priority: () => {
-            // if (TEST) return 1 // mostra sempre in modalità test
             return 0 // disabled
+            // if (TEST) return 1 // mostra sempre in modalità test
             // show only in minute 42
             const date = moment().tz('Europe/Rome').format('mm')
             if (date === '42') return 3
@@ -79,6 +81,9 @@ const pages = [
 ]
 
 function startLoop() {
+
+    document.getElementById('version').textContent = `dm-monitor v${VERSION}`
+
     // Routine that updates the clock
     setupInterval(updateClock, 1)
 
