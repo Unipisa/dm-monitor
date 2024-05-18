@@ -3,7 +3,7 @@ name: Restart Monitor
 on:
   push:
     branches:
-      - main
+      - disabled
 jobs:
   production:
     runs-on: ubuntu-latest
