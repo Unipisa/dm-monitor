@@ -54,4 +54,4 @@ jobs:
           ssh-keyscan -H ${{ secrets.HOSTNAME }} >> ~/.ssh/known_hosts
       - name: restart server
         run: |
-          ssh radxa@${{ secrets.HOSTNAME }} echo ./start-schermo.sh
+          echo ssh radxa@${{ secrets.HOSTNAME }} ./start-schermo.sh
