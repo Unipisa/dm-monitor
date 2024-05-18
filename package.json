@@ -14,7 +14,7 @@
     "license": "ISC",
     "devDependencies": {
         "terser": "^5.29.1",
-        "vite": "^5.1.5"
+        "vite": "^5.1.7"
     },
     "dependencies": {
         "dm-planimetrie": "^1.1.0",
