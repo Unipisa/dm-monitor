@@ -92,7 +92,7 @@ body {
     left: 1250px;
     border-left: 3px groove #003c71;
     width: 600px;
-    height: 870px;
+    height: 7500px;
     top: 180px;
     display: none;
 }
@@ -100,7 +100,7 @@ body {
 .visitors-container {
     overflow: hidden;
     display: block;
-    height: 820px;
+    height: 650px;
 }
 
 .visitors > h2 {
@@ -198,3 +198,6 @@ body {
 .title {
     font-size: 80%;
 }
+
+
+

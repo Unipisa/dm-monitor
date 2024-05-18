@@ -39,9 +39,24 @@ export class EventsAndVisitorsPage {
         this.visitors_div = document.createElement('div')
         this.visitors_div.className = 'visitors'
 
+        this.ticker_div = document.createElement('div')
+        const SPACER = `   |   `
+        this.ticker_div.innerHTML =`
+            <div id="cbwrap">
+            <div class="hwrap"><div class="hmove">
+            <div class="hitem">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.${SPACER} 
+                Aliquam consequat varius consequat.${SPACER}
+                Fusce dapibus turpis vel nisi malesuada sollicitudin.${SPACER}
+                Pellentesque auctor molestie orci ut blandit.${SPACER}
+            </div>
+            </div>
+        </div>`
+
         document.body.appendChild(this.events_div)
         document.body.appendChild(this.visitors_div)
-		$('.visitors, .eventi').fadeIn(500) 
+        document.body.appendChild(this.ticker_div)
+		$('.visitors, .eventi, #cbwrap').fadeIn(500) 
 
         // Scroll effect for the visitor block
         this.scrollVisitorsInterval = setInterval(scrollVisitors, 100)
@@ -57,14 +72,19 @@ export class EventsAndVisitorsPage {
         clearInterval(this.scrollVisitorsInterval)
         const events_div = this.events_div
         const visitors_div = this.visitors_div
+        const ticker_div = this.ticker_div
         this.events_div = null
         this.visitors_div = null
+        this.ticker_div = null
         $('.eventi').fadeOut(EFFECT_DURATION, () => {
             events_div.remove()
             callback()
         })
         $('.visitors').fadeOut(EFFECT_DURATION, () => {
             visitors_div.remove()
+        })
+        $('#cbwrap').fadeOut(EFFECT_DURATION, () => {
+            ticker_div.remove()
         })
     }
 
@@ -92,9 +112,11 @@ function scrollVisitors() {
         }
         const currentTop = vc.scrollTop
         const newTop = vc.scrollTop + 1
+        vc.scrollTop = newTop 
+
+        console.log(`scrollTop: ${vc.scrollTop} currentTop: ${currentTop}`)
 
         // If we get to the bottom, wrap to the top
-        vc.scrollTop = newTop
         if (currentTop && currentTop == vc.scrollTop) {
             vc['data-wait'] = stop_up + stop_bottom
         }
