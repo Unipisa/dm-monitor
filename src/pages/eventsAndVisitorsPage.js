@@ -48,6 +48,8 @@ export class EventsAndVisitorsPage {
         if (this.news_div && this.news_html) {
             this.news_div.innerHTML = this.news_html
             this.news_html = null // avoid double rendering
+            const width = this.news_div.offsetWidth
+            $(".hmove").css("animation-duration", `${width/6}s`)
         }
     }
 
@@ -272,6 +274,7 @@ function renderEvents(events) {
 async function loadVisitors() {
     var visits = []
 
+
     try {
         const endpoint = DM_MANAGER_HOST + '/api/v0/public/visits';    
         const res = await fetch(endpoint)
@@ -333,13 +336,17 @@ async function loadNews() {
         return
     }
     // remove past news
-    news = news.filter(n => moment(n.date_gmt).utc().isBefore(moment().utc()))
+    news = news.filter(n => (true || moment(n.date_gmt).utc().unix() >= moment().utc().unix()))
+    news = news.filter((n, i) => i < 10)
+
     const SPACER = `   |   `
-    function render(n) {
+    function render(n,i,lst) {
         var $b = document.createElement('b')
-        $b.textContent = `${n.title.rendered}:`
+        $b.textContent = `(${i+1}/${lst.length}) ${n?.title?.rendered}`
         var $span = document.createElement('span')
-        $span.textContent = ` ${n.content.rendered}`
+        $span.innerHTML = n?.content?.rendered
+        /* TRICK: converte HTML in testo semplice: */
+        $span.textContent = $span.textContent
         var $news = document.createElement('div')
         $news.appendChild($b)
         $news.appendChild($span)

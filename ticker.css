@@ -2,7 +2,7 @@
 
 /* (A1) FORCE ALL ITEMS INTO SINGLE ROW */
 .hmove { 
-  display: flex; 
+  display: inline-block; 
 }
 
 .hitem { 
@@ -10,16 +10,25 @@
   flex-shrink: 0; 
 }
 
-.hwrap { overflow: hidden; }
-
-/* (A2) MOVE ITEMS FROM RIGHT TO LEFT */
-/* first item = 0, fourth item = -300% */
+.hwrap { 
+  overflow: hidden; 
+  width: 100%; /* highly recommended */
+}
 
 @keyframes tickerh {
-  0% { transform: translatex(100%); }
+  0% { transform: translatex(0); visibility: visible;}
   100% { transform: translatex(-100%); }
 }
-.hmove { animation: tickerh linear 20s infinite; }
+.hmove { 
+/*  animation: tickerh linear 200s infinite; */
+
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-name: tickerh;
+  /* animation-duration viene sovrascritto dal codice javascript 
+  che calcola la durata in base alla lunghezza del testo */
+  animation-duration: 60s;
+}
 
 
 /* (A3) COSMETICS - NOT IMPORTANT */
@@ -28,21 +37,23 @@
   font-size: 25px;
   color: #ffffff;
   background: #003c71;
-  width: 100%; /* highly recommended */
   position: fixed;
   bottom: 0;
   left: 0;
   overflow: hidden;
 }
 .hitem { 
+  display: inline-block;
   padding: 2px;
   text-align: center;
+  padding-left: 1000px;
 }
 .hwrap, .hwrap * { box-sizing: border-box; }
 
 .hmove{
   box-sizing:border-box;
   font-family:arial,sans-serif;
-  max-width:6000px;
+  /*max-width:6000px;*/
   white-space: nowrap;
+/*  padding-right: 100%;*/
 }
