@@ -8,9 +8,9 @@ import { setupInterval } from './utils'
 
 const pages = [
     new FullScreenImagePage({
-        imageUrl: 'images/colloquium_levine.png?d=20231213x',
-        start: '2024-02-19 06:00',
-        end: '2024-02-19 18:44',
+        imageUrl: "images/colloquium_huisken.png?d=20231213x",
+        start: "2024-05-23 06:00",
+        end: "2024-05-23 18:44",
         test: TEST, // mostra sempre in modalità test
     }),
 

@@ -1,3 +1,7 @@
+const DM_MANAGER_HOST =
+    'https://manage.dm.unipi.it'
+//    'https://manage.develop.lb.cs.dm.unipi.it'
+
 import { EFFECT_DURATION } from '../constants'
 
 import { setupInterval } from '../utils'
@@ -6,50 +10,61 @@ export class EventsAndVisitorsPage {
     constructor() {
         this.lastUpdate = null
         this.reload()
-        // Block of routines that periodically poll events from different sources and
-        // update the relevant blocks in the HTML
+        // update the list of events and visitors every 10 minutes
+        // even if the page is not visible 
         setupInterval(() => this.reload(), 600)
-
-        // Scroll effect for the visitor block
-        setInterval(scrollVisitors, 100)
     }
 
     async reload() {
-        this.events_html = await loadEvents()
+        this.events = await loadEvents()
+        this.update()
         this.visitors_html = await loadVisitors()
 
         console.log('lastUpdate')
         this.lastUpdate = new Date()
     }
 
-    start() {
-        console.log(this.lastUpdate)
-
-        if (this.eventi) throw Error(`reentrant call`)
-        this.eventi = document.createElement('div')
-        this.eventi.className = 'eventi'
-        this.eventi.innerHTML = this.events_html
-
-        this.visitors = document.createElement('div')
-        this.visitors.className = 'visitors'
-        this.visitors.innerHTML = this.visitors_html
-
-        document.body.appendChild(this.eventi)
-        document.body.appendChild(this.visitors)
-        $('.visitors, .eventi').fadeIn(500)
+    update() {
+        // console.log('update ')
+        if (this.events) this.events_html = renderEvents(this.events)
+        if (this.events_div) this.events_div.innerHTML = this.events_html || 'loading...'
+        if (this.visitors_div) this.visitors_div.innerHTML = this.visitors_html || 'loading...'
     }
 
+	start() {
+        if (this.events_div) throw Error(`reentrant call`)
+        this.events_div = document.createElement('div')
+        this.events_div.className = 'eventi'        // 
+
+        this.visitors_div = document.createElement('div')
+        this.visitors_div.className = 'visitors'
+
+        document.body.appendChild(this.events_div)
+        document.body.appendChild(this.visitors_div)
+		$('.visitors, .eventi').fadeIn(500) 
+
+        // Scroll effect for the visitor block
+        this.scrollVisitorsInterval = setInterval(scrollVisitors, 100)
+
+        // update the rendering of the events to enable the "IS RUNNING NOW" badge
+        // every 20 seconds
+        this.update()
+        this.updateInterval = setInterval(() => this.update(), 20000)
+	}
+
     stop(callback) {
-        const eventi = this.eventi
-        const visitors = this.visitors
-        this.eventi = null
-        this.visitors = null
+        clearInterval(this.updateInterval)
+        clearInterval(this.scrollVisitorsInterval)
+        const events_div = this.events_div
+        const visitors_div = this.visitors_div
+        this.events_div = null
+        this.visitors_div = null
         $('.eventi').fadeOut(EFFECT_DURATION, () => {
-            eventi.remove()
+            events_div.remove()
             callback()
         })
         $('.visitors').fadeOut(EFFECT_DURATION, () => {
-            visitors.remove()
+            visitors_div.remove()
         })
     }
 
@@ -86,137 +101,135 @@ function scrollVisitors() {
     }
 }
 
-function sortEvents(eventA, eventB) {
-    let dateA = null
-    let dateB = null
-
-    if (eventA.type == 'conference') {
-        dateA = new Date(eventA.startDate)
-    } else {
-        dateA = new Date(eventA.startDatetime)
-    }
-
-    if (eventB.type == 'conference') {
-        dateB = new Date(eventB.startDate)
-    } else {
-        dateB = new Date(eventB.startDatetime)
-    }
-
-    return dateA.getTime() - dateB.getTime()
-}
-
 async function loadEvents() {
-    var data = null
-
+    var events = [];
+    
+    // ATTENZIONE: le date dei seminari sono in UTC, comprendendo anche l'ora.
+    // invece le date delle conferenze sono attualmente la mezzanotte di UTC (e non dell'ora locale)
+    const midnight = moment().tz("Europe/Rome").startOf('day').utc().format()
+    const today = moment().format('YYYY-MM-DD')
+    
     try {
         // let res = await fetch('https://www.dm.unipi.it/wp-json/wp/v2/unipievents?per_page=50');
-        let res_sem = await (await fetch('https://manage.dm.unipi.it/api/v0/public/seminars?from=now&_sort=startDatetime')).json()
-        let res_con = await (await fetch('https://manage.dm.unipi.it/api/v0/public/conferences?from=now&_sort=startDate')).json()
+        let res_sem = await (await fetch(DM_MANAGER_HOST + `/api/v0/public/seminars?from=${midnight}&_sort=startDatetime`)).json()
+        let res_con = await (await fetch(DM_MANAGER_HOST + `/api/v0/public/conferences?from=${today}&_sort=startDate`)).json()
 
-        const res_sem_aug = res_sem.data.map(x => {
-            return { ...x, type: 'seminar' }
+        const res_sem_aug = res_sem.data.map((x) => {
+            return {  ...x, 
+                type: 'seminar',
+                startDatetime: moment.utc(x.startDatetime).tz("Europe/Rome"),
+                endDatetime: moment.utc(x.startDatetime).tz("Europe/Rome").add(x.duration, 'minutes'),
+            }
         })
-        const res_con_aug = res_con.data.map(x => {
-            return { ...x, type: 'conference' }
+        const res_con_aug = res_con.data.map((x) => {
+            return { ...x, 
+                type: 'conference', 
+                startDatetime: moment.tz(x.startDate, "Europe/Rome").startOf('day'),
+                endDatetime: moment.tz(x.endDate || x.startDate, "Europe/Rome").startOf('day').add(1, 'days'),
+            }
         })
-        data = [...res_sem_aug, ...res_con_aug]
-        data.sort(sortEvents)
+        events = [ ...res_sem_aug, ...res_con_aug ]
+        events.sort((x,y) => x.startDatetime - y.startDatetime)
+        // console.log(JSON.stringify({events}, null, 2))
     } catch (error) {
         console.log(error)
         return
     }
 
-    var valid_events = []
-    const now = moment.utc().tz('Europe/Rome')
+    // console.log(events)
 
+    return events
+}
+
+function renderEvents(events) {
+    const now = moment.utc().tz("Europe/Rome")
     // We only collect the events that end in the future.
-    for (var i = 0; i < data.length; i++) {
-        if (data[i].startDatetime) {
-            let eventDate = moment.utc(data[i].startDatetime).tz('Europe/Rome')
-            if (now <= moment.utc(data[i].startDatetime).tz('Europe/Rome').add(data[i].duration, 'minutes')) {
-                valid_events.push(data[i])
-            }
-        } else {
-            valid_events.push(data[i])
+    events = events.filter(x => (now <= x.endDatetime));
+
+    let number_of_events_in_the_same_day = 0;
+    var first_event_date = null;
+    for (var i = 0; i < events.length; i++) {
+        var event_date = events[i]?events[i].startDatetime.format('YYYY-MM-DD'):'';
+        if (event_date && !first_event_date) first_event_date = event_date;
+        if (event_date == first_event_date) {
+            number_of_events_in_the_same_day++;
         }
     }
 
-    // console.log(valid_events)
+    const number_of_events = Math.min(events.length,Math.max(4, number_of_events_in_the_same_day));
+    const smaller = (number_of_events > 4)
 
-    const number_of_events = Math.min(valid_events.length, 4)
-
-    let html = ''
+    let html = '';
     for (var i = 0; i < number_of_events; i++) {
-        let clock_icon = '<i class="fa-solid fa-clock"></i>'
-        let venue_icon = `<i class="fa-solid fa-location-dot"></i>`
+        const event = events[i]
+        let clock_icon = '<i class="fa-solid fa-clock"></i>';
+        let venue_icon = `<i class="fa-solid fa-location-dot"></i>`;
 
         var to = ''
         var from = ''
 
-        if (valid_events[i].type == 'conference') {
-            to = moment.utc(valid_events[i].endDate)
-            from = moment.utc(valid_events[i].startDate)
-            from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format('MMM DD')}</span>`
-        } else {
+        if (event.type == 'conference') {
+            to = moment.utc(event.endDate)
+            from = moment.utc(event.startDate)
+            from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD')}</span>`;
+        }
+        else {
             // Seminar here
-            to = moment
-                .utc(valid_events[i].startDatetime)
-                .add(valid_events[i].duration, 'minutes')
-                .tz('Europe/Rome')
-            from = moment.utc(valid_events[i].startDatetime).tz('Europe/Rome')
+            to = event.endDatetime
+            from = event.startDatetime
 
-            if (from >= now && to <= now) {
-                from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`
+            if (from <= now && now <= to) {
+                from = `<span class="badge badge-sm badge-success">${clock_icon} Running now</span>`;
             } else {
-                from = `<span class="badge badge-sm badge-primary">${clock_icon} ${from.format(
-                    'MMM DD HH:mm'
-                )}</span>`
+                from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD HH:mm')}</span>`;
             }
         }
 
-        let venue = `<span class="badge badge-sm badge-secondary">${venue_icon} ${valid_events[i].conferenceRoom?.name}</span>`
-
-        var border_override = ''
+                
+        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom?.name}</span>`
+        
+        var border_override = "";
         if (i == 0) {
             border_override = ` style="border-top: 0px;"`
         }
-
-        var tag = ''
-        var speaker = ''
-        if (valid_events[i].type == 'conference') {
-            tag = '<span class="badge badge-sm badge-primary">Conference</span>'
-        } else if (valid_events[i].type == 'seminar') {
-            tag = '<span class="badge badge-sm badge-primary small">Seminar</span>'
-            if (valid_events[i].speakers) {
-                speaker = valid_events[i].speakers.map(speaker => formatPerson(speaker)).join(', ')
+        
+        var tag = "";
+        var speaker = "";
+        if (event.type == 'conference') {
+            tag = '<span class="badge badge-sm badge-primary smaller">Conference</span>';
+        }
+        else if (event.type == 'seminar') {
+            tag = '<span class="badge badge-sm badge-primary smaller">Seminar</span>';
+            if (event.speakers) {
+                speaker = event.speakers.map(speaker => formatPerson(speaker)).join(', ')
             } else {
-                speaker = formatPerson(valid_events[i].speaker)
+                speaker = formatPerson(event.speaker)
             }
         }
 
         let el = `
-        <div class="event" ${border_override}>
+        <div class="event ${smaller?'smaller':''}" ${border_override}>
         <div class="venue">
         ${from} 
         ${venue}
         ${tag}
         </div>
         <h3>
-        ${speaker ? speaker + '<br />' : ''}
-        <i style="font-size: 90%">${valid_events[i].title}</i>
+        ${speaker?speaker+(smaller?'':'<br />'):''}
+        <i class="title">${event.title}</i>
         </h3>
         </div>
         `
         html += el
     }
-    return html
+    return html || "No events to be shown...";
 }
 
 async function loadVisitors() {
     var visits = []
 
     try {
-        const endpoint = 'https://manage.dm.unipi.it/api/v0/public/visits'
+        const endpoint = DM_MANAGER_HOST + '/api/v0/public/visits';    
         const res = await fetch(endpoint)
         visits = (await res.json()).data
     } catch (error) {
@@ -272,5 +285,5 @@ function formatPerson(person) {
         // No valid affiliations, keep an empty string
     }
 
-    return `<b>${person.firstName} ${person.lastName}</b> <span style='font-size: 75%'>${affiliationsLine}</span>`
+        return `<b class="speaker">${person.firstName} ${person.lastName}</b> <span class="affiliation">${affiliationsLine}</span>`
 }
