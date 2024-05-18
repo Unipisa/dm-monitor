@@ -55,4 +55,4 @@ jobs:
       - name: restart server
         run: |
           scp start-schermo.sh radxa@${{ secrets.HOSTNAME }}:
-          echo ssh radxa@${{ secrets.HOSTNAME }} bash start-schermo.sh
+          ssh radxa@${{ secrets.HOSTNAME }} bash start-schermo.sh
