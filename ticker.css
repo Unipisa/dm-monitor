@@ -19,7 +19,7 @@
   0% { transform: translatex(100%); }
   100% { transform: translatex(-100%); }
 }
-.hmove { animation: tickerh linear 60s infinite; }
+.hmove { animation: tickerh linear 20s infinite; }
 
 
 /* (A3) COSMETICS - NOT IMPORTANT */

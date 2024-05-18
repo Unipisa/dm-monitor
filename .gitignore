@@ -1,3 +1,4 @@
 # NodeJS
 dist/
 node_modules/
+.vite/

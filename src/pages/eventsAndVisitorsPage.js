@@ -16,22 +16,43 @@ export class EventsAndVisitorsPage {
     }
 
     async reload() {
-        this.events = await loadEvents()
-        this.update()
-        this.visitors_html = await loadVisitors()
+        Promise.all([
+            loadEvents().then((events) => {
+                this.events = events
+            }),
+            loadVisitors().then((visitors) => {
+                this.visitors_html = visitors
+            }),
+            loadNews().then((news) => {
+                this.news_html = news
+            }),
+        ]).then(() => {
+            this.update()
 
-        console.log('lastUpdate')
-        this.lastUpdate = new Date()
+            console.log('lastUpdate')
+            this.lastUpdate = new Date()
+        })
     }
 
     update() {
-        // console.log('update ')
+        console.log('update ')
         if (this.events) this.events_html = renderEvents(this.events)
-        if (this.events_div) this.events_div.innerHTML = this.events_html || 'loading...'
-        if (this.visitors_div) this.visitors_div.innerHTML = this.visitors_html || 'loading...'
+        if (this.events_div && this.events_html) {
+            this.events_div.innerHTML = this.events_html
+            this.events_html = null // avoid double rendering
+        }
+        if (this.visitors_div && this.visitors_html) {
+            this.visitors_div.innerHTML = this.visitors_html
+            this.visitors_html = null // avoid double rendering
+        }
+        if (this.news_div && this.news_html) {
+            this.news_div.innerHTML = this.news_html
+            this.news_html = null // avoid double rendering
+        }
     }
 
 	start() {
+        console.log('start events and visitors page')
         if (this.events_div) throw Error(`reentrant call`)
         this.events_div = document.createElement('div')
         this.events_div.className = 'eventi'        // 
@@ -39,9 +60,11 @@ export class EventsAndVisitorsPage {
         this.visitors_div = document.createElement('div')
         this.visitors_div.className = 'visitors'
 
-        this.ticker_div = document.createElement('div')
+        this.news_div = document.createElement('div')
+        this.news_div.className = 'cbwrap'
+        /*
         const SPACER = `   |   `
-        this.ticker_div.innerHTML =`
+        this.news_div.innerHTML =`
             <div id="cbwrap">
             <div class="hwrap"><div class="hmove">
             <div class="hitem">
@@ -52,10 +75,11 @@ export class EventsAndVisitorsPage {
             </div>
             </div>
         </div>`
+        */
 
         document.body.appendChild(this.events_div)
         document.body.appendChild(this.visitors_div)
-        document.body.appendChild(this.ticker_div)
+        document.body.appendChild(this.news_div)
 		$('.visitors, .eventi, #cbwrap').fadeIn(500) 
 
         // Scroll effect for the visitor block
@@ -72,10 +96,10 @@ export class EventsAndVisitorsPage {
         clearInterval(this.scrollVisitorsInterval)
         const events_div = this.events_div
         const visitors_div = this.visitors_div
-        const ticker_div = this.ticker_div
+        const news_div = this.news_div
         this.events_div = null
         this.visitors_div = null
-        this.ticker_div = null
+        this.news_div = null
         $('.eventi').fadeOut(EFFECT_DURATION, () => {
             events_div.remove()
             callback()
@@ -84,7 +108,7 @@ export class EventsAndVisitorsPage {
             visitors_div.remove()
         })
         $('#cbwrap').fadeOut(EFFECT_DURATION, () => {
-            ticker_div.remove()
+            news_div.remove()
         })
     }
 
@@ -113,8 +137,6 @@ function scrollVisitors() {
         const currentTop = vc.scrollTop
         const newTop = vc.scrollTop + 1
         vc.scrollTop = newTop 
-
-        console.log(`scrollTop: ${vc.scrollTop} currentTop: ${currentTop}`)
 
         // If we get to the bottom, wrap to the top
         if (currentTop && currentTop == vc.scrollTop) {
@@ -296,6 +318,42 @@ async function loadVisitors() {
     html += '</div>'
 
     return html
+}
+
+async function loadNews() {
+    var news = []
+
+    try {
+        const endpoint = 'https://www.dm.unipi.it/wp-json/wp/v2/posts?per_page=50'
+        const res = await fetch(endpoint)
+        news = (await res.json())
+    } catch (error) {
+        console.log('Error loading news')
+        console.error(error)
+        return
+    }
+    // remove past news
+    news = news.filter(n => moment(n.date_gmt).utc().isBefore(moment().utc()))
+    const SPACER = `   |   `
+    function render(n) {
+        var $b = document.createElement('b')
+        $b.textContent = `${n.title.rendered}:`
+        var $span = document.createElement('span')
+        $span.textContent = ` ${n.content.rendered}`
+        var $news = document.createElement('div')
+        $news.appendChild($b)
+        $news.appendChild($span)
+        return $news.innerHTML
+    }
+    const content = news.map(render).join(SPACER)
+    return `
+            <div id="cbwrap">
+            <div class="hwrap"><div class="hmove">
+            <div class="hitem">
+                ${content}
+            </div>
+            </div>
+        </div>`
 }
 
 function formatPerson(person) {

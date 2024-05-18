@@ -157,11 +157,11 @@ async function cycleScreen() {
 
     const r = Math.random() * total
     let sum = 0
-    console.log(pages, priority)
+    // console.log(pages, priority)
 
     for (let i = 0; i < pages.length; i++) {
         sum += priority[i]
-        console.log(sum, r)
+        // console.log(sum, r)
         if (sum > r) {
             // choose this!
             $('#bullets').html(
