@@ -37,17 +37,20 @@ export class EventsAndVisitorsPage {
     update() {
         console.log('update ')
         if (this.events) this.events_html = renderEvents(this.events)
-        if (this.events_div && this.events_html) {
+        if (this.events_div && this.events_html != this?.events_html_last) {
             this.events_div.innerHTML = this.events_html
-            this.events_html = null // avoid double rendering
+            // remember the current content to avoid double rendering
+            this.events_html_last = this.events.html 
         }
-        if (this.visitors_div && this.visitors_html) {
+        if (this.visitors_div && this.visitors_html != this?.visitors_html_last) {
             this.visitors_div.innerHTML = this.visitors_html
-            this.visitors_html = null // avoid double rendering
+            // remember the current content to avoid double rendering
+            this.visitors_html_last = this.visitors_html
         }
-        if (this.news_div && this.news_html) {
+        if (this.news_div && this.news_html != this?.news_html_last) {
             this.news_div.innerHTML = this.news_html
-            this.news_html = null // avoid double rendering
+            // remember the current content to avoid double rendering
+            this.news_html_last = this.news_html 
             const width = this.news_div.offsetWidth
             $(".hmove").css("animation-duration", `${width/6}s`)
         }
@@ -102,6 +105,10 @@ export class EventsAndVisitorsPage {
         this.events_div = null
         this.visitors_div = null
         this.news_div = null
+        this.visitors_html_last = null
+        this.events_html_last = null
+        this.news_html_last = null
+
         $('.eventi').fadeOut(EFFECT_DURATION, () => {
             events_div.remove()
             callback()
