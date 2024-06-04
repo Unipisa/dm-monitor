@@ -239,7 +239,7 @@ function renderEvents(events) {
         }
 
                 
-        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom?.name}</span>`
+        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom ? event.conferenceRoom.name : event.institution?.name}</span>`
         
         var border_override = "";
         if (i == 0) {
