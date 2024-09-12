@@ -201,8 +201,10 @@ function renderEvents(events) {
 
     let number_of_events_in_the_same_day = 0;
     var first_event_date = null;
+    var today_date = moment().format('YYYY-MM-DD');
     for (var i = 0; i < events.length; i++) {
         var event_date = events[i]?events[i].startDatetime.format('YYYY-MM-DD'):'';
+        if (event_date < today_date) event_date = today_date; // le conferenze iniziano nel passato
         if (event_date && !first_event_date) first_event_date = event_date;
         if (event_date == first_event_date) {
             number_of_events_in_the_same_day++;
