@@ -52,7 +52,7 @@ export class EventsAndVisitorsPage {
             // remember the current content to avoid double rendering
             this.news_html_last = this.news_html 
             const width = this.news_div.offsetWidth
-            $(".hmove").css("animation-duration", `${width/6}s`)
+            $(".hmove").css("animation-duration", `${width/2}s`)
         }
     }
 
