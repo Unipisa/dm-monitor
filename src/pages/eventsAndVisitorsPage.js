@@ -170,6 +170,7 @@ async function loadEvents() {
         const res_sem_aug = res_sem.data.map((x) => {
             return {  ...x, 
                 type: 'seminar',
+                colloquium: x.category?.name === "Colloquium",
                 startDatetime: moment.utc(x.startDatetime).tz("Europe/Rome"),
                 endDatetime: moment.utc(x.startDatetime).tz("Europe/Rome").add(x.duration, 'minutes'),
             }
@@ -254,7 +255,7 @@ function renderEvents(events) {
             tag = '<span class="badge badge-sm badge-primary smaller">Conference</span>';
         }
         else if (event.type == 'seminar') {
-            tag = '<span class="badge badge-sm badge-primary smaller">Seminar</span>';
+            tag = `<span class="badge badge-sm badge-primary smaller">${event.colloquium ? 'Colloquium' : 'Seminar'}</span>`;
             if (event.speakers) {
                 speaker = event.speakers.map(speaker => formatPerson(speaker)).join(', ')
             } else {
