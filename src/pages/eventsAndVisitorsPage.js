@@ -352,15 +352,23 @@ async function loadNews() {
     const SPACER = `   |   `
     function render(n,i,lst) {
         var $b = document.createElement('b')
-        $b.textContent = `(${i+1}/${lst.length}) ${n?.title?.rendered}`
+        $b.textContent = `(${i+1}/${lst.length}) ${decodeHtmlEntities(n?.title?.rendered)}`
         var $span = document.createElement('span')
         $span.innerHTML = n?.content?.rendered
-        /* TRICK: converte HTML in testo semplice: */
-        $span.textContent = $span.textContent
+        /* TRICK: converte HTML in testo semplice. */
+        /* decodeHtmlEntities non dovrebbe servire... 
+         * ma c'è qualche carattere speciale di cui viene fatto l'escape
+         * e quindi viene fatta a mano la conversione
+         **/
+        $span.textContent = decodeHtmlEntities($span.textContent)
         var $news = document.createElement('div')
         $news.appendChild($b)
         $news.appendChild($span)
         return $news.innerHTML
+
+        function decodeHtmlEntities(str) {
+            return str.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+        }        
     }
     const content = news.map(render).join(SPACER)
     return `
