@@ -1,16 +1,22 @@
 export class BicycloidPage {
+    constructor({priority,speed}) {
+        this.priorityProp = priority
+        this.speed = speed
+    }
+
 	start() {
         if (this.div) throw Error('reentrant call')
         this.div = document.createElement('div')
-        this.div.className = 'bicyloid'
+        this.div.className = 'bicycloid'
         this.div.innerHTML = `
-            <canvas id="bicycloid_canvas" width=1920 height=900>
+            <canvas id="bicycloid_canvas" width=1920 height=907>
         `
         document.body.appendChild(this.div)
 		$('.bicycloid').fadeIn(500)
 		const canvas = document.getElementById('bicycloid_canvas');
 		this.world = new World(canvas, {
 			nObjects: 5,
+            speed: this.speed,
 		});
 	}
 
@@ -31,6 +37,12 @@ export class BicycloidPage {
     }
 
 	priority() {
+        if (this.priorityProp) {
+            if (typeof this.priorityProp === 'function') {
+                return this.priorityProp()
+            }
+            return this.priorityProp
+        }
 		const date = moment().tz("Europe/Rome")
         const day = date.format('YYYY-MM-DD')
 		if (day >= '2025-05-15' && day <= '2025-07-01') {
