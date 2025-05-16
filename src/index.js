@@ -3,6 +3,7 @@ import { TEST } from './constants'
 import { EmbedPage } from './pages/embedPage'
 import { EventsAndVisitorsPage } from './pages/eventsAndVisitorsPage'
 import { FractalXmasPage } from './pages/fractalXmasPage'
+import { BicycloidPage } from './pages/bicycloid'
 import { FullScreenImagePage } from './pages/fullscreenImagePage'
 import { setupInterval } from './utils'
 
@@ -19,6 +20,8 @@ const pages = [
     new EventsAndVisitorsPage(),
 
     new FractalXmasPage(),
+
+    new BicycloidPage(),
 
     // new LaureePage(),
 
