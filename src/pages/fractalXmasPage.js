@@ -29,14 +29,14 @@ export class FractalXmasPage {
 	}
 
     duration() {
-        return 20000
+        return 40000
     }
 
 	priority() {
 		// è attivo dall'8 dicembre al 6 gennaio
 		const date = moment().tz("Europe/Rome").format('MM-DD')
-		if (date >= '12-08' || date <= '01-06') return 10
-
+        if (date >= '12-24' || date <= '01-06') return 10
+		if (date >= '12-08') return 0.5
         return 0
 	}
 };

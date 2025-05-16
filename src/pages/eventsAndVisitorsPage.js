@@ -52,7 +52,7 @@ export class EventsAndVisitorsPage {
             // remember the current content to avoid double rendering
             this.news_html_last = this.news_html 
             const width = this.news_div.offsetWidth
-            $(".hmove").css("animation-duration", `${width/6}s`)
+            $(".hmove").css("animation-duration", `${width/2}s`)
         }
     }
 
@@ -170,6 +170,7 @@ async function loadEvents() {
         const res_sem_aug = res_sem.data.map((x) => {
             return {  ...x, 
                 type: 'seminar',
+                colloquium: x.category?.name === "Colloquium",
                 startDatetime: moment.utc(x.startDatetime).tz("Europe/Rome"),
                 endDatetime: moment.utc(x.startDatetime).tz("Europe/Rome").add(x.duration, 'minutes'),
             }
@@ -201,8 +202,10 @@ function renderEvents(events) {
 
     let number_of_events_in_the_same_day = 0;
     var first_event_date = null;
+    var today_date = moment().format('YYYY-MM-DD');
     for (var i = 0; i < events.length; i++) {
         var event_date = events[i]?events[i].startDatetime.format('YYYY-MM-DD'):'';
+        if (event_date < today_date) event_date = today_date; // le conferenze iniziano nel passato
         if (event_date && !first_event_date) first_event_date = event_date;
         if (event_date == first_event_date) {
             number_of_events_in_the_same_day++;
@@ -239,7 +242,7 @@ function renderEvents(events) {
         }
 
                 
-        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom?.name}</span>`
+        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom ? event.conferenceRoom.name : event.institution?.name}</span>`
         
         var border_override = "";
         if (i == 0) {
@@ -252,7 +255,7 @@ function renderEvents(events) {
             tag = '<span class="badge badge-sm badge-primary smaller">Conference</span>';
         }
         else if (event.type == 'seminar') {
-            tag = '<span class="badge badge-sm badge-primary smaller">Seminar</span>';
+            tag = `<span class="badge badge-sm badge-primary smaller">${event.colloquium ? 'Colloquium' : 'Seminar'}</span>`;
             if (event.speakers) {
                 speaker = event.speakers.map(speaker => formatPerson(speaker)).join(', ')
             } else {
@@ -349,15 +352,23 @@ async function loadNews() {
     const SPACER = `   |   `
     function render(n,i,lst) {
         var $b = document.createElement('b')
-        $b.textContent = `(${i+1}/${lst.length}) ${n?.title?.rendered}`
+        $b.textContent = `(${i+1}/${lst.length}) ${decodeHtmlEntities(n?.title?.rendered)}`
         var $span = document.createElement('span')
         $span.innerHTML = n?.content?.rendered
-        /* TRICK: converte HTML in testo semplice: */
-        $span.textContent = $span.textContent
+        /* TRICK: converte HTML in testo semplice. */
+        /* decodeHtmlEntities non dovrebbe servire... 
+         * ma c'è qualche carattere speciale di cui viene fatto l'escape
+         * e quindi viene fatta a mano la conversione
+         **/
+        $span.textContent = decodeHtmlEntities($span.textContent)
         var $news = document.createElement('div')
         $news.appendChild($b)
         $news.appendChild($span)
         return $news.innerHTML
+
+        function decodeHtmlEntities(str) {
+            return str.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+        }        
     }
     const content = news.map(render).join(SPACER)
     return `
