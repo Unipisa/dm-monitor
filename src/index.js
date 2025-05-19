@@ -26,6 +26,7 @@ const pages = [
             if (TEST) return 1 // mostra sempre in modalità test
             const date = moment().tz("Europe/Rome")
             const day = date.format('YYYY-MM-DD')
+            if (day === '2025-05-20') return 1
             if (day >= '2025-05-15' && day <= '2025-08-01') {
                 const minute = date.format('mm')
                 if (minute === '42' || minute === '19') return 30

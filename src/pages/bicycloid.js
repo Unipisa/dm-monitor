@@ -9,7 +9,7 @@ export class BicycloidPage {
         this.div = document.createElement('div')
         this.div.className = 'bicycloid'
         this.div.innerHTML = `
-            <canvas id="bicycloid_canvas" width=1920 height=907>
+            <canvas id="bicycloid_canvas" width=1920 height=920>
         `
         document.body.appendChild(this.div)
 		$('.bicycloid').fadeIn(500)
@@ -33,23 +33,13 @@ export class BicycloidPage {
 	}
 
     duration() {
-        return 20000
+        return 60000
     }
 
 	priority() {
-        if (this.priorityProp) {
-            if (typeof this.priorityProp === 'function') {
-                return this.priorityProp()
-            }
-            return this.priorityProp
-        }
-		const date = moment().tz("Europe/Rome")
-        const day = date.format('YYYY-MM-DD')
-		if (day >= '2025-05-15' && day <= '2025-07-01') {
-            const minute = date.format('mm')
-            if (minute === '42' || minute === '09') return 30
-        }
-        return 0
+        if (!this.priorityProp) return 1
+        if (typeof this.priorityProp === 'function') return this.priorityProp()
+        return this.priorityProp
 	}
 };
 
