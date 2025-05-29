@@ -20,7 +20,7 @@ const pages = [
     new EventsAndVisitorsPage(),
 
     new FractalXmasPage(),
-
+/*
     new BicycloidPage({
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test
@@ -33,7 +33,7 @@ const pages = [
             }
             return 0
         }
-    }),
+    }),*/
 
     // new LaureePage(),
 
