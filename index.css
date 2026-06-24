@@ -122,7 +122,7 @@ body {
 }
 
 .lauree {
-    padding: 2em;
+    padding: 1em;
     margin-top: 25px;
     font-size: 2rem;
     display: none;
@@ -133,17 +133,43 @@ body {
     color: white;
     margin-bottom: 30px;
     margin-top: -30px;
-    border-bottom: 6px solid #003c71;
-    border-top: 6px solid #003c71;
-    border-left: 6px solid #003c71;
-    padding: .2em;
-    background: #003c71;
+    padding: 20px;
+    background: #007108;
+    text-align: center;
 }
 
 .lauree h2 {
     font-size: 1.2em;
     color: #003c71;
     margin-bottom: 30px;
+}
+
+.lauree tr {
+    padding: 0px;
+    background: #f8f8f8;
+}
+
+.lauree tr.separator td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.lauree table tr.separator {
+    background: transparent !important;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+.lauree td.time  {
+    text-align: right;
+}
+
+
+.lauree .badge-type {
+    background-color: #c9a227;
+    color: #1a1a1a;
+    width: 2.5em;
+    font-size: 0.6em;
 }
 
 .fullscreen-img {

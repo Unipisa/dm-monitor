@@ -5,11 +5,18 @@ import { EventsAndVisitorsPage } from './pages/eventsAndVisitorsPage'
 import { FractalXmasPage } from './pages/fractalXmasPage'
 import { BicycloidPage } from './pages/bicycloid'
 import { FullScreenImagePage } from './pages/fullscreenImagePage'
+import { LaureePage } from './pages/laureePage'
 import { setupInterval } from './utils'
 
 import colloquium_img from '../images/colloquium_huisken.png'
 
 const pages = [
+    new LaureePage({
+        start: "2026-06-24 07:00",
+        end: "2026-06-24 12:00",
+        test: TEST, // mostra sempre in modalità test
+    }),
+
     new FullScreenImagePage({
         imageUrl: colloquium_img, 
         start: "2024-05-23 06:00",
@@ -34,8 +41,6 @@ const pages = [
             return 0
         }
     }),*/
-
-    // new LaureePage(),
 
     new EmbedPage({
         url: 'https://lab.phc.dm.unipi.it/problemi/jumbotron',
