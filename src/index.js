@@ -43,7 +43,7 @@ const pages = [
     }),*/
 
     new EmbedPage({
-        url: 'https://lab.phc.dm.unipi.it/problemi/jumbotron',
+        url: 'https://problemi.phc.dm.unipi.it/jumbotron',
         duration: 60000,
         priority: () => {
             if (TEST) return 1 // mostra sempre in modalità test
