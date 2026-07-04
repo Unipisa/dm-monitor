@@ -15,8 +15,9 @@ const pages = [
         start: "2026-06-24 07:00",
         end: "2026-06-24 12:00",
         test: TEST, // mostra sempre in modalità test
+        url: "https://monitor.lb.cs.dm.unipi.it/~paolini/lauree/index.json",
     }),
-
+    
     new FullScreenImagePage({
         imageUrl: colloquium_img, 
         start: "2024-05-23 06:00",
@@ -27,20 +28,20 @@ const pages = [
     new EventsAndVisitorsPage(),
 
     new FractalXmasPage(),
-/*
-    new BicycloidPage({
-        priority: () => {
-            if (TEST) return 1 // mostra sempre in modalità test
-            const date = moment().tz("Europe/Rome")
-            const day = date.format('YYYY-MM-DD')
-            if (day === '2025-05-20') return 1
-            if (day >= '2025-05-15' && day <= '2025-08-01') {
-                const minute = date.format('mm')
-                if (minute === '42' || minute === '19') return 30
-            }
-            return 0
-        }
-    }),*/
+
+    // new BicycloidPage({
+    //     priority: () => {
+    //         if (TEST) return 1 // mostra sempre in modalità test
+    //         const date = moment().tz("Europe/Rome")
+    //         const day = date.format('YYYY-MM-DD')
+    //         if (day === '2025-05-20') return 1
+    //         if (day >= '2025-05-15' && day <= '2025-08-01') {
+    //             const minute = date.format('mm')
+    //             if (minute === '42' || minute === '19') return 30
+    //         }
+    //         return 0
+    //     }
+    // }),
 
     new EmbedPage({
         url: 'https://problemi.phc.dm.unipi.it/jumbotron',

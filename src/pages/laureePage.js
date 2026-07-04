@@ -43,13 +43,14 @@ const example_data = [
 ]
 
 export class LaureePage {
-	constructor({ start, end, test, title, data}) {
+	constructor({ start, end, test, title, data, url}) {
 		this.test = test
 		this.title = title || data?.title || "Appello di laurea" 
 		this.data = data || example_data
 		this.start_moment = moment.tz(start, "Europe/Rome").unix()
         this.end_moment = moment.tz(end, "Europe/Rome").unix()
 		this.div = null
+		this.url = url
 	}
 
 	html() {
@@ -80,14 +81,31 @@ export class LaureePage {
 	}
 
 	start() {
-        if (this.div) {
-            throw Error(`reentrant call!`)
-        }
-        this.div = document.createElement('div')
-        this.div.className = 'lauree'
-        this.div.innerHTML = this.html()
-        document.body.appendChild(this.div)
-        $(this.div).fadeIn();
+		const f = () => {
+			if (this.div) {
+				throw Error(`reentrant call!`)
+			}
+			this.div = document.createElement('div')
+			this.div.className = 'lauree'
+			this.div.innerHTML = this.html()
+			document.body.appendChild(this.div)
+			$(this.div).fadeIn();
+		}
+
+		if (this.url) {
+			console.log(`Fetching lauree data from ${this.url}`)
+			fetch(this.url)
+				.then(response => response.json())
+				.then(data => {
+					this.data = data
+					f()
+				})
+				.catch(error => {
+					console.error('Error fetching data:', error)
+				})
+		} else {
+			f()
+		}
 	}
 
 	stop(callback) {
