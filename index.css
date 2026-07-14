@@ -122,8 +122,11 @@ body {
 }
 
 .lauree {
-    padding: 1em;
-    margin-top: 25px;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 0em;
+    padding-bottom: 0em;
+    margin-top: 0px;
     font-size: 2rem;
     display: none;
 }
@@ -131,9 +134,10 @@ body {
 .lauree > h1 {
     font-size: 1.4em;
     color: white;
-    margin-bottom: 30px;
-    margin-top: -30px;
+    margin-bottom: 10px;
+    margin-top: 10px;
     padding: 20px;
+    border-radius: 12px;
     background: #007108;
     text-align: center;
 }

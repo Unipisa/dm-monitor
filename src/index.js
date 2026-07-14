@@ -12,11 +12,14 @@ import colloquium_img from '../images/colloquium_huisken.png'
 
 const pages = [
     new LaureePage({
-        start: "2026-06-24 07:00",
-        end: "2026-06-24 12:00",
+        start: "2026-07-17 07:00",
+        end: "2026-07-17 20:00",
+        title: "Appello di laurea &mdash; 17 luglio 2026",
         test: TEST, // mostra sempre in modalità test
         url: "https://monitor.lb.cs.dm.unipi.it/~paolini/lauree/index.json",
     }),
+    
+    new EventsAndVisitorsPage(),
     
     new FullScreenImagePage({
         imageUrl: colloquium_img, 
@@ -24,8 +27,6 @@ const pages = [
         end: "2024-05-23 18:44",
         test: TEST, // mostra sempre in modalità test
     }),
-
-    new EventsAndVisitorsPage(),
 
     new FractalXmasPage(),
 
