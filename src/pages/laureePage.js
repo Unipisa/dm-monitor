@@ -53,21 +53,48 @@ export class LaureePage {
 		this.url = url
 	}
 
+	getCurrentTime() {
+		const params = new URLSearchParams(location.search)
+		if (params.has('testTime')) return params.get('testTime')
+		return moment().tz("Europe/Rome").format('HH:mm')
+	}
+
+	timeToMinutes(t) {
+		const [h, m] = t.split(':').map(Number)
+		return h * 60 + m
+	}
+
+	getCurrentEventIndex(events, currentTime) {
+		const cur = this.timeToMinutes(currentTime)
+		let idx = -1
+		for (let i = 0; i < events.length; i++) {
+			const e = events[i]
+			if (e.time) {
+				const t = this.timeToMinutes(e.time)
+				if (t <= cur && cur < t + 40) idx = i
+			}
+		}
+		return idx
+	}
+
 	html() {
+		const currentTime = this.getCurrentTime()
 		let html = `<h1>${this.title}</h1>`
 		html += `<div class="row">`
 		for (const room of this.data) {
+			const curIdx = this.getCurrentEventIndex(room.events, currentTime)
 			html += `<div class="col-4 p-4">
 					<h2>
 						${room.room} 
 						<span class="badge badge-sm badge-primary">${room.floor}</span>
 					</h2>`
 			html += "<table class='table table-sm'>"
-			for (const event of room.events) {
+			for (let i = 0; i < room.events.length; i++) {
+				const event = room.events[i]
 				if (event.html !== undefined) {
 					html += `<tr class="separator"><td colspan="3">${event.html}</td></tr>`
 				} else {
-					html += `<tr>
+					html += `<tr${i === curIdx ? ' class="current"' : ''}>
 						<td class="time"><strong>${event.time}</strong></td>
 						<td><span class="badge badge-sm badge-type">${event.type ?? ''}</span></td>
 					 	<td>${event.name}</td>

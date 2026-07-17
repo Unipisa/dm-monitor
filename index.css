@@ -138,13 +138,13 @@ body {
     margin-top: 10px;
     padding: 20px;
     border-radius: 12px;
-    background: #007108;
+    background: #003c71;
     text-align: center;
 }
 
 .lauree h2 {
     font-size: 1.2em;
-    color: #003c71;
+    color: black;
     margin-bottom: 30px;
 }
 
@@ -164,8 +164,23 @@ body {
     font-size: 0.8em;
 }
 
+.lauree td {
+    vertical-align: middle;
+}
+
 .lauree td.time  {
     text-align: right;
+}
+
+.lauree tr.current td {
+    background-color: #007108 !important;
+    color: white !important;
+}
+.lauree tr.current td:first-child {
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+.lauree tr.current td:last-child {
+    border-radius: 0 0.5rem 0.5rem 0;
 }
 
 
@@ -174,6 +189,7 @@ body {
     color: #1a1a1a;
     width: 2.5em;
     font-size: 0.6em;
+    transform: translate(0, -4px);
 }
 
 .fullscreen-img {
