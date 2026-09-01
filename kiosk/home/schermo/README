@@ -1,0 +1,96 @@
+================================================================================
+CONFIGURAZIONE TOTEM KIOSK (DEBIAN + WAYLAND/CAGE + FIREFOX)
+================================================================================
+
+Documentazione della configurazione e gestione del totem basato su Linux Debian,
+impostato per visualizzare la dashboard https://unipisa.github.io/dm-monitor
+a schermo intero in modalità kiosk persistente all'avvio del sistema.
+
+
+--------------------------------------------------------------------------------
+1. ARCHITETTURA DEL SISTEMA
+--------------------------------------------------------------------------------
+
+L'avvio e la gestione dell'interfaccia grafica si basano su un'infrastruttura
+minimale e resiliente:
+
+1. TTY1 Autologin: systemd-getty autentica automaticamente l'utente schermo 
+   sulla console tty1.
+2. ~/.bash_profile: Riconosce il login sulla tty1 ed esegue lo script di 
+   avvio ~/kiosk.sh.
+3. ~/kiosk.sh:
+   - Gestisce la sincronizzazione con la rete.
+   - Avvia il compositore Wayland cage.
+   - Esegue firefox in modalità --kiosk.
+
+
+--------------------------------------------------------------------------------
+2. CONFIGURAZIONE DI RETE
+--------------------------------------------------------------------------------
+
+Il sistema richiede una connessione di rete attiva per caricare la pagina del 
+monitor.
+
+* Modalità di connessione: Rete cablata (Ethernet) o Wi-Fi aziendale con 
+  autenticazione 802.1X.
+* Integrazione nello Script: Per prevenire errori di caricamento all'avvio 
+  del sistema, lo script ~/kiosk.sh esegue un controllo ciclico in background 
+  tramite "ping -c 1 8.8.8.8". L'ambiente grafico e la finestra del browser si 
+  avviano esclusivamente dopo la conferma della disponibilità di rete.
+* Gestione disconnessioni: In caso di perdita temporanea del segnale a sistema 
+  avviato, Firefox gestisce la riconnessione automatica al ricaricamento della 
+  pagina o alla risposta del server target.
+
+
+--------------------------------------------------------------------------------
+3. FILE DI CONFIGURAZIONE
+--------------------------------------------------------------------------------
+
+[A] Override Autologin TTY1
+File: /etc/systemd/system/getty@tty1.service.d/override.conf
+
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty --autologin schermo --noclear %I $TERM
+
+
+[B] Entrypoint Utente
+File: ~/.bash_profile
+
+if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+    exec /home/schermo/kiosk.sh
+fi
+
+
+[C] Script di Avvio
+File: ~/kiosk.sh
+
+#!/bin/bash
+
+# Attende la disponibilità della rete prima di avviare l'interfaccia
+until ping -c 1 8.8.8.8 >/dev/null 2>&1; do
+    sleep 2
+done
+
+# Avvia Cage con Firefox in modalità Kiosk
+exec cage -s -- firefox --kiosk https://unipisa.github.io/dm-monitor
+
+
+--------------------------------------------------------------------------------
+4. MANUTENZIONE E GESTIONE REMOTA (VIA SSH)
+--------------------------------------------------------------------------------
+
+* Riavviare la sessione grafica / Kiosk:
+  Terminare i processi dell'utente provoca l'autologin immediato su TTY1 da 
+  parte di agetty e il contestuale riavvio dell'intero stack di visualizzazione.
+  Comando:
+    sudo pkill -u schermo
+
+* Riavviare il sistema:
+  Comando:
+    sudo reboot
+
+* Disattivare lo standby dello schermo:
+  Il mantenimento dello schermo sempre attivo (24/7) viene gestito mantenendo 
+  attiva la sessione principale di cage ed evitando l'attivazione dei profili 
+  di risparmio energetico hardware del display.
