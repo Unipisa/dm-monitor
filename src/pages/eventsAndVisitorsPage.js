@@ -385,7 +385,7 @@ function formatPerson(person) {
     var affiliationsLine = ''
     try {
         const affiliations = person?.affiliations.map(_ => _.name)
-        affiliationsLine = affiliations ? ` (${affiliations.join(', ')})` : ''
+        affiliationsLine = affiliations.length>0 ? ` (${affiliations.join(', ')})` : ''
     } catch (error) {
         // No valid affiliations, keep an empty string
     }
