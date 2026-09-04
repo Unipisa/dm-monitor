@@ -152,6 +152,20 @@ let currentPage = null
 let currentPageTimestamp = null
 
 async function cycleScreen() {
+    const testSlideParam = new URLSearchParams(location.search).get('testSlide')
+    if (testSlideParam !== null) {
+        const idx = parseInt(testSlideParam)
+        if (!isNaN(idx) && idx >= 0 && idx < pages.length) {
+            const page = pages[idx]
+            if (currentPage !== page) {
+                if (currentPage) currentPage.stop(() => page.start())
+                else page.start()
+                currentPage = page
+            }
+            return
+        }
+    }
+
     // choose a random page among pages with priority>0
     // probability of choosing a page is proportional to
     // its priority
