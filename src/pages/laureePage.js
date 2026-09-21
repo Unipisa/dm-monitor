@@ -83,10 +83,18 @@ export class LaureePage {
 		html += `<div class="row">`
 		for (const room of this.data) {
 			const curIdx = this.getCurrentEventIndex(room.events, currentTime)
+			let floor = room.floor;
+			if (!floor) {
+				switch(room.room) {
+					case "Aula Riunioni": floor = "Primo piano"; break;
+					case "Aula Seminari": floor = "Primo piano"; break;
+					case "Aula Magna": floor = "Piano terra"; break;
+				}
+			}
 			html += `<div class="col-4 p-4">
 					<h2>
 						${room.room} 
-						<span class="badge badge-sm badge-primary">${room.floor}</span>
+						${floor ? `<span class="badge badge-sm badge-primary">${floor}</span>` : ''}
 					</h2>`
 			html += "<table class='table table-sm'>"
 			for (let i = 0; i < room.events.length; i++) {
@@ -124,7 +132,7 @@ export class LaureePage {
 			fetch(this.url)
 				.then(response => response.json())
 				.then(data => {
-					this.data = data
+					this.data = data.data
 					f()
 				})
 				.catch(error => {

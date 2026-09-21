@@ -21,8 +21,8 @@ const pages = [
     }),
 
     new LaureePage({
-        start: "2026-09-21 07:00",
-        end: "2026-09-21 20:00",
+        start: "2026-09-25 07:00",
+        end: "2026-09-25 20:00",
         title: "Appello di laurea &mdash; 17 luglio 2026",
         test: TEST, // mostra sempre in modalità test
         url: "https://monitor.lb.cs.dm.unipi.it/~paolini/lauree/2026-09-25.json",
