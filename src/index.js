@@ -7,16 +7,26 @@ import { BicycloidPage } from './pages/bicycloid'
 import { FullScreenImagePage } from './pages/fullscreenImagePage'
 import { LaureePage } from './pages/laureePage'
 import { setupInterval } from './utils'
+import { QRCodePage } from './pages/qrcodePage'
 
 import colloquium_img from '../images/colloquium_huisken.png'
 
 const pages = [
+    new QRCodePage({
+        url: 'https://www.dm.unipi.it/',
+        iconUrl: null,
+        title: 'inquadra il codice per accedere alla pagina web',
+        priority: 0.1,
+        duration: 60000,
+    }),
+
     new LaureePage({
-        start: "2026-07-17 07:00",
-        end: "2026-07-17 20:00",
+        start: "2026-09-21 07:00",
+        end: "2026-09-21 20:00",
         title: "Appello di laurea &mdash; 17 luglio 2026",
         test: TEST, // mostra sempre in modalità test
-        url: "https://monitor.lb.cs.dm.unipi.it/~paolini/lauree/index.json",
+        url: "https://monitor.lb.cs.dm.unipi.it/~paolini/lauree/2026-09-25.json",
+        priority: 1.0,
     }),
     
     new EventsAndVisitorsPage(),

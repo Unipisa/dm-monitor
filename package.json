@@ -18,6 +18,7 @@
     },
     "dependencies": {
         "dm-planimetrie": "^1.1.0",
+        "qrcode": "^1.5.4",
         "three": "^0.162.0"
     }
 }

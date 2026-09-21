@@ -245,5 +245,34 @@ body {
     font-size: 80%;
 }
 
+.qrcode-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f4f6f9;
+    font-family: system-ui, -apple-system, sans-serif;
+}
 
+.qrcode-card {
+    background: white;
+    padding: 40px 60px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    text-align: center;
+}
 
+.qrcode-title {
+    font-size: 2.5rem;
+    color: #1a1a1a;
+    margin-bottom: 30px;
+    max-width: 800px;
+}
+
+#qrcode_canvas {
+    border-radius: 12px;
+}
