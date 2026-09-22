@@ -16,8 +16,8 @@ const pages = [
         url: 'https://www.dm.unipi.it/',
         iconUrl: null,
         title: 'inquadra il codice per accedere alla pagina web',
-        priority: 0.1,
-        duration: 60000,
+        priority: 0.01,
+        duration: 30000,
     }),
 
     new LaureePage({
