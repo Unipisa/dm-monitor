@@ -9,7 +9,7 @@ import { LaureePage } from './pages/laureePage'
 import { setupInterval } from './utils'
 import { QRCodePage } from './pages/qrcodePage'
 
-import colloquium_img from '../images/colloquium_huisken.png'
+import colloquium_img from '../images/colloquium_panaretos.jpg'
 
 const pages = [
     new QRCodePage({
@@ -33,8 +33,8 @@ const pages = [
     
     new FullScreenImagePage({
         imageUrl: colloquium_img, 
-        start: "2024-05-23 06:00",
-        end: "2024-05-23 18:44",
+        start: "2026-09-29 07:00",
+        end: "2026-09-29 19:00",
         test: TEST, // mostra sempre in modalità test
     }),
 
