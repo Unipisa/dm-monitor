@@ -40,7 +40,7 @@ export class EventsAndVisitorsPage {
         if (this.events_div && this.events_html != this?.events_html_last) {
             this.events_div.innerHTML = this.events_html
             // remember the current content to avoid double rendering
-            this.events_html_last = this.events.html 
+            this.events_html_last = this.events_html 
         }
         if (this.visitors_div && this.visitors_html != this?.visitors_html_last) {
             this.visitors_div.innerHTML = this.visitors_html
@@ -224,11 +224,21 @@ function renderEvents(events) {
         var to = ''
         var from = ''
 
-        if (event.type == 'conference') {
-            to = moment.utc(event.endDate)
-            from = moment.utc(event.startDate)
-            from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD')}</span>`;
-        }
+		if (event.type == 'conference') {
+		    const start = moment.utc(event.startDate)
+		    const end = moment.utc(event.endDate || event.startDate)
+		
+		    let label
+		    if (start.isSame(end, 'day')) {
+		        label = start.format('MMM DD')                                // Oct 19
+		    } else if (start.isSame(end, 'month')) {
+		        label = `${start.format('MMM DD')} &ndash; ${end.format('DD')}`  // Oct 19 – 21
+		    } else {
+		        label = `${start.format('MMM DD')} &ndash; ${end.format('MMM DD')}` // Oct 29 – Nov 02
+		    }
+		
+		    from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${label}</span>`
+		}	
         else {
             // Seminar here
             to = event.endDatetime
