@@ -18,13 +18,13 @@ export class EventsAndVisitorsPage {
     async reload() {
         Promise.all([
             loadEvents().then((events) => {
-                this.events = events
+                if (events !== undefined) this.events = events
             }),
             loadVisitors().then((visitors) => {
-                this.visitors_html = visitors
+                if (visitors !== undefined) this.visitors_html = visitors
             }),
             loadNews().then((news) => {
-                this.news_html = news
+                if (news !== undefined) this.news_html = news
             }),
         ]).then(() => {
             this.update()
@@ -37,17 +37,17 @@ export class EventsAndVisitorsPage {
     update() {
         console.log('update ')
         if (this.events) this.events_html = renderEvents(this.events)
-        if (this.events_div && this.events_html != this?.events_html_last) {
+        if (this.events_div && typeof this.events_html === 'string' && this.events_html != this?.events_html_last) {
             this.events_div.innerHTML = this.events_html
             // remember the current content to avoid double rendering
-            this.events_html_last = this.events.html 
+            this.events_html_last = this.events_html
         }
-        if (this.visitors_div && this.visitors_html != this?.visitors_html_last) {
+        if (this.visitors_div && typeof this.visitors_html === 'string' && this.visitors_html != this?.visitors_html_last) {
             this.visitors_div.innerHTML = this.visitors_html
             // remember the current content to avoid double rendering
             this.visitors_html_last = this.visitors_html
         }
-        if (this.news_div && this.news_html != this?.news_html_last) {
+        if (this.news_div && typeof this.news_html === 'string' && this.news_html != this?.news_html_last) {
             this.news_div.innerHTML = this.news_html
             // remember the current content to avoid double rendering
             this.news_html_last = this.news_html 
@@ -116,7 +116,7 @@ export class EventsAndVisitorsPage {
         $('.visitors').fadeOut(EFFECT_DURATION, () => {
             visitors_div.remove()
         })
-        $('#cbwrap').fadeOut(EFFECT_DURATION, () => {
+        $(news_div).fadeOut(EFFECT_DURATION, () => {
             news_div.remove()
         })
     }
@@ -179,7 +179,7 @@ async function loadEvents() {
             return { ...x, 
                 type: 'conference', 
                 startDatetime: moment.tz(x.startDate, "Europe/Rome").startOf('day'),
-                endDatetime: moment.tz(x.endDate || x.startDate, "Europe/Rome").startOf('day').add(1, 'days'),
+                endDatetime: moment.tz(x.endDate || x.startDate, "Europe/Rome").endOf('day'),
             }
         })
         events = [ ...res_sem_aug, ...res_con_aug ]
@@ -197,7 +197,7 @@ async function loadEvents() {
 
 function renderEvents(events) {
     const now = moment.utc().tz("Europe/Rome")
-    // We only collect the events that end in the future.
+    // Consideriamo validi gli eventi che terminano nel futuro/oggi
     events = events.filter(x => (now <= x.endDatetime));
 
     let number_of_events_in_the_same_day = 0;
@@ -205,14 +205,14 @@ function renderEvents(events) {
     var today_date = moment().format('YYYY-MM-DD');
     for (var i = 0; i < events.length; i++) {
         var event_date = events[i]?events[i].startDatetime.format('YYYY-MM-DD'):'';
-        if (event_date < today_date) event_date = today_date; // le conferenze iniziano nel passato
+        if (event_date < today_date) event_date = today_date;
         if (event_date && !first_event_date) first_event_date = event_date;
         if (event_date == first_event_date) {
             number_of_events_in_the_same_day++;
         }
     }
 
-    const number_of_events = Math.min(events.length,Math.max(4, number_of_events_in_the_same_day));
+    const number_of_events = Math.min(events.length, Math.max(4, number_of_events_in_the_same_day));
     const smaller = (number_of_events > 4)
 
     let html = '';
@@ -225,8 +225,10 @@ function renderEvents(events) {
         var from = ''
 
         if (event.type == 'conference') {
-            to = moment.utc(event.endDate)
-            from = moment.utc(event.startDate)
+            to = event.endDatetime
+            from = event.startDatetime
+            
+            // Format del badge data per la conferenza
             from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD')}</span>`;
         }
         else {
@@ -241,8 +243,7 @@ function renderEvents(events) {
             }
         }
 
-                
-        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom ? event.conferenceRoom.name : event.institution?.name}</span>`
+        let venue = `<span class="badge badge-sm badge-secondary smaller">${venue_icon} ${event.conferenceRoom ? event.conferenceRoom.name : (event.institution?.name || 'DM')}</span>`
         
         var border_override = "";
         if (i == 0) {
@@ -258,7 +259,7 @@ function renderEvents(events) {
             tag = `<span class="badge badge-sm badge-primary smaller">${event.colloquium ? 'Colloquium' : 'Seminar'}</span>`;
             if (event.speakers) {
                 speaker = event.speakers.map(speaker => formatPerson(speaker)).join(', ')
-            } else {
+            } else if (event.speaker) {
                 speaker = formatPerson(event.speaker)
             }
         }
