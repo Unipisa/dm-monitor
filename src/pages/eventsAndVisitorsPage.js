@@ -225,11 +225,19 @@ function renderEvents(events) {
         var from = ''
 
         if (event.type == 'conference') {
-            to = event.endDatetime
-            from = event.startDatetime
-            
-            // Format del badge data per la conferenza
-            from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${from.format('MMM DD')}</span>`;
+            const start = moment.utc(event.startDate)
+            const end = moment.utc(event.endDate || event.startDate)
+
+            let label
+            if (start.isSame(end, 'day')) {
+                label = start.format('MMM DD')                                // Oct 19
+            } else if (start.isSame(end, 'month')) {
+                label = `${start.format('MMM DD')} &ndash; ${end.format('DD')}`  // Oct 19 – 21
+            } else {
+                label = `${start.format('MMM DD')} &ndash; ${end.format('MMM DD')}` // Oct 29 – Nov 02
+            }
+
+            from = `<span class="badge badge-sm badge-primary${smaller?' smaller':''}">${clock_icon} ${label}</span>`
         }
         else {
             // Seminar here
