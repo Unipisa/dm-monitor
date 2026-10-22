@@ -33,3 +33,26 @@ chmod +x ~/kiosk.sh
 
 ### 4. Ricarica la configurazione di systemd per l'autologin
 sudo systemctl daemon-reload
+
+### 5. Attiva il controllo automatico degli aggiornamenti
+
+Il kiosk controlla ogni minuto il file `version.json` pubblicato su GitHub Pages.
+Quando cambia il commit, riavvia Cage e Firefox tramite l'autologin. Il primo
+controllo registra la versione senza riavviare; gli errori di rete non interrompono
+la visualizzazione. Non serve accesso SSH da GitHub Actions né una VPN.
+
+Dalla radice di una copia aggiornata del repository sul kiosk:
+
+```bash
+sudo apt install -y python3 procps ca-certificates
+sudo install -m 755 kiosk/usr/local/bin/dm-monitor-update /usr/local/bin/dm-monitor-update
+sudo install -m 644 kiosk/etc/systemd/system/dm-monitor-update.service /etc/systemd/system/
+sudo install -m 644 kiosk/etc/systemd/system/dm-monitor-update.timer /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now dm-monitor-update.timer
+sudo systemctl start dm-monitor-update.service
+```
+
+Pubblica prima il workflow aggiornato per rendere disponibile `version.json`.
+Per controllare l'esito usa `journalctl -u dm-monitor-update.service -n 20 --no-pager`.
+I dettagli e i comandi di gestione sono nel [README del kiosk](kiosk/home/schermo/README).

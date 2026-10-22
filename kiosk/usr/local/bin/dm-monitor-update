@@ -1,0 +1,80 @@
+#!/usr/bin/python3
+"""Restart the local kiosk only when GitHub Pages publishes a new commit."""
+
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+from urllib.error import URLError
+from urllib.request import Request, urlopen
+
+
+VERSION_URL = "https://unipisa.github.io/dm-monitor/version.json"
+
+
+def fetch_version(url):
+    separator = "&" if "?" in url else "?"
+    request = Request(
+        f"{url}{separator}check={time.time_ns()}",
+        headers={"Cache-Control": "no-cache", "User-Agent": "dm-monitor-kiosk"},
+    )
+    with urlopen(request, timeout=15) as response:
+        payload = response.read(4097)
+    if len(payload) > 4096:
+        raise ValueError("version.json troppo grande")
+    data = json.loads(payload)
+    commit = data.get("commit") if isinstance(data, dict) else None
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise ValueError("version.json non contiene un commit valido")
+    return commit
+
+
+def save_version(state_file, version):
+    temporary = state_file.with_suffix(".tmp")
+    temporary.write_text(version + "\n", encoding="ascii")
+    temporary.replace(state_file)
+
+
+def check_update(url, state_dir):
+    version = fetch_version(url)
+    state_dir.mkdir(parents=True, exist_ok=True)
+    state_file = state_dir / "version"
+    try:
+        previous = state_file.read_text(encoding="ascii").strip()
+    except FileNotFoundError:
+        save_version(state_file, version)
+        print(f"Versione iniziale registrata: {version}", flush=True)
+        return
+    if previous == version:
+        return
+
+    # Cage exits to getty; autologin starts a fresh kiosk session. The system
+    # service is independent of tty1 and is not affected by this signal.
+    subprocess.run(
+        ["/usr/bin/pkill", "-TERM", "-u", str(os.getuid()), "-x", "cage"],
+        check=True,
+        timeout=5,
+    )
+    save_version(state_file, version)
+    print(f"Riavvio kiosk per aggiornamento {previous} -> {version}", flush=True)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--url", default=VERSION_URL)
+    parser.add_argument("--state-dir", type=Path, default=Path("/var/lib/dm-monitor-kiosk"))
+    args = parser.parse_args()
+    try:
+        check_update(args.url, args.state_dir)
+    except (OSError, URLError, ValueError, subprocess.SubprocessError) as error:
+        print(f"Controllo aggiornamenti fallito; riprovo al prossimo ciclo: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

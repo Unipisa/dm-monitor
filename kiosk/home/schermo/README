@@ -87,13 +87,38 @@ exec cage -s -- firefox --kiosk https://unipisa.github.io/dm-monitor
     sudo pkill -u schermo
 
 * Riavvio automatico dopo il deploy su GitHub Pages:
-  Il workflow si collega via SSH a schermo@schermo.cs.dm.unipi.it usando la
-  chiave privata nel secret SSH_PRIV_KEY. La relativa chiave pubblica deve
-  essere autorizzata in /home/schermo/.ssh/authorized_keys.
-  Il comando eseguito è:
-    pkill -TERM -u "$(id -u)" -x cage
-  Termina solo Cage dell'utente SSH, lasciando attiva la connessione per
-  riportare eventuali errori. L'autologin riavvia la sessione kiosk; non serve sudo.
+  Il workflow pubblica version.json con l'identificativo del commit. Un timer
+  systemd sul kiosk lo controlla via HTTPS ogni minuto, senza accessi SSH da
+  GitHub Actions o VPN. Quando la versione cambia, il servizio termina Cage
+  dell'utente schermo e l'autologin riavvia Firefox con il sito aggiornato.
+  Il primo controllo registra la versione senza riavviare. Errori di rete,
+  file assente o risposte non valide non provocano riavvii; il timer riprova.
+  Se Cage non è attivo, la nuova versione non viene registrata e il controllo
+  successivo riprova. Lo stato è in /var/lib/dm-monitor-kiosk/version.
+
+  Installazione o aggiornamento del controllo automatico (dalla radice di
+  una copia aggiornata del repository sul kiosk, con accesso sudo):
+
+    sudo apt install -y python3 procps ca-certificates
+    sudo install -m 755 kiosk/usr/local/bin/dm-monitor-update /usr/local/bin/dm-monitor-update
+    sudo install -m 644 kiosk/etc/systemd/system/dm-monitor-update.service /etc/systemd/system/
+    sudo install -m 644 kiosk/etc/systemd/system/dm-monitor-update.timer /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now dm-monitor-update.timer
+
+  Verifica manuale (al primo controllo non riavvia il kiosk):
+
+    sudo systemctl start dm-monitor-update.service
+    systemctl list-timers dm-monitor-update.timer
+    journalctl -u dm-monitor-update.service -n 20 --no-pager
+
+  Disattivazione:
+
+    sudo systemctl disable --now dm-monitor-update.timer
+
+  Prima dell'installazione pubblicare il workflow aggiornato, che genera
+  version.json. I secret SSH_PRIV_KEY, SSH_PUB_KEY e HOSTNAME non sono più
+  usati da questo workflow. Non occorre modificare lo script kiosk.sh.
 
 * Riavviare il sistema:
   Comando:

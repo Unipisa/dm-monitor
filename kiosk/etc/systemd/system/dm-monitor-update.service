@@ -1,0 +1,16 @@
+[Unit]
+Description=Controlla la versione pubblicata di dm-monitor e riavvia il kiosk
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=schermo
+Group=schermo
+StateDirectory=dm-monitor-kiosk
+ExecStart=/usr/local/bin/dm-monitor-update
+TimeoutStartSec=30
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
