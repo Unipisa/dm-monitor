@@ -86,6 +86,15 @@ exec cage -s -- firefox --kiosk https://unipisa.github.io/dm-monitor
   Comando:
     sudo pkill -u schermo
 
+* Riavvio automatico dopo il deploy su GitHub Pages:
+  Il workflow si collega via SSH a schermo@schermo.cs.dm.unipi.it usando la
+  chiave privata nel secret SSH_PRIV_KEY. La relativa chiave pubblica deve
+  essere autorizzata in /home/schermo/.ssh/authorized_keys.
+  Il comando eseguito è:
+    pkill -TERM -u "$(id -u)" -x cage
+  Termina solo Cage dell'utente SSH, lasciando attiva la connessione per
+  riportare eventuali errori. L'autologin riavvia la sessione kiosk; non serve sudo.
+
 * Riavviare il sistema:
   Comando:
     sudo reboot

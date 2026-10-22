@@ -51,24 +51,27 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    env:
+      KIOSK_HOST: schermo.cs.dm.unipi.it
+      KIOSK_USER: schermo
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
 
       - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIV_KEY }}
         run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIV_KEY }}" > ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PUB_KEY }}" > ~/.ssh/id_rsa.pub
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa.pub
-          ssh-keyscan -H ${{ secrets.HOSTNAME }} >> ~/.ssh/known_hosts || echo failed
+          ssh-keyscan -T 10 -H "$KIOSK_HOST" >> ~/.ssh/known_hosts
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: restart server
+      - name: Restart kiosk
+        timeout-minutes: 1
         run: |
-          scp start-schermo.sh radxa@${{ secrets.HOSTNAME }}:
-          ssh radxa@${{ secrets.HOSTNAME }} bash start-schermo.sh
+          # Exiting Cage returns to getty, which starts a new kiosk session.
+          # Target only Cage so that the SSH session can report command failures.
+          ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=yes \
+            "$KIOSK_USER@$KIOSK_HOST" 'pkill -TERM -u "$(id -u)" -x cage'
