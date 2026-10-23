@@ -24,7 +24,7 @@ export class EventsAndVisitorsPage {
                 if (visitors !== undefined) this.visitors_html = visitors
             }),
             loadNews().then((news) => {
-                if (news !== undefined) this.news_html = news
+                if (news !== undefined) this.news = news
             }),
         ]).then(() => {
             this.update()
@@ -47,10 +47,11 @@ export class EventsAndVisitorsPage {
             // remember the current content to avoid double rendering
             this.visitors_html_last = this.visitors_html
         }
-        if (this.news_div && typeof this.news_html === 'string' && this.news_html != this?.news_html_last) {
-            this.news_div.innerHTML = this.news_html
+        const news_html = this.news?.join('')
+        if (this.news_div && typeof news_html === 'string' && news_html != this?.news_html_last) {
+            this.news_div.innerHTML = renderNews(this.news)
             // remember the current content to avoid double rendering
-            this.news_html_last = this.news_html 
+            this.news_html_last = news_html
             const width = this.news_div.offsetWidth
             $(".hmove").css("animation-duration", `${width/2}s`)
         }
@@ -358,7 +359,6 @@ async function loadNews() {
     news = news.filter(n => (true || moment(n.date_gmt).utc().unix() >= moment().utc().unix()))
     news = news.filter((n, i) => i < 10)
 
-    const SPACER = `   |   `
     function render(n,i,lst) {
         var $b = document.createElement('b')
         $b.textContent = `(${i+1}/${lst.length}) ${decodeHtmlEntities(n?.title?.rendered)}`
@@ -379,7 +379,14 @@ async function loadNews() {
             return str.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
         }        
     }
-    const content = news.map(render).join(SPACER)
+    return news.map(render)
+}
+
+function renderNews(news) {
+    const SPACER = `   |   `
+    // Start at a random item each time the page is shown, keeping the sequence.
+    const start = Math.floor(Math.random() * news.length)
+    const content = [...news.slice(start), ...news.slice(0, start)].join(SPACER)
     return `
             <div id="cbwrap">
             <div class="hwrap"><div class="hmove">
